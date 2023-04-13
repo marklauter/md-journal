@@ -1,4 +1,5 @@
 ﻿using Grynwald.MarkdownGenerator;
+using Newtonsoft.Json;
 
 namespace MD.Journal
 {
@@ -62,6 +63,40 @@ namespace MD.Journal
             stream.Position = 0;
 
             return stream;
+        }
+
+        public static async Task SaveAsJsonAsync(
+            this JournalEntry entry,
+            CancellationToken cancellationToken)
+        {
+            var fileName = $"{entry.Id}.json";
+            using var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            using var streamWriter = new StreamWriter(file);
+            using var jsonWriter = new JsonTextWriter(streamWriter);
+            JsonSerializer
+                .Create(new JsonSerializerSettings { Formatting = Formatting.Indented })
+                .Serialize(jsonWriter, entry);
+            await file.FlushAsync(cancellationToken);
+        }
+
+        public static async Task SaveAsJsonAsync(
+            this JournalEntry entry,
+            string path,
+            CancellationToken cancellationToken)
+        {
+            if (String.IsNullOrEmpty(path))
+            {
+                throw new ArgumentException($"'{nameof(path)}' cannot be null or empty.", nameof(path));
+            }
+
+            _ = Directory.CreateDirectory(path);
+            var fileName = Path.Combine(path, $"{entry.Id}.json");
+
+            using var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            using var streamWriter = new StreamWriter(file);
+            using var jsonWriter = new JsonTextWriter(streamWriter);
+            new JsonSerializer().Serialize(jsonWriter, entry);
+            await file.FlushAsync(cancellationToken);
         }
 
         public static async Task SaveAsMarkdownAsync(

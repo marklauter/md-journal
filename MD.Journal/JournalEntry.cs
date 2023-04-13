@@ -1,4 +1,6 @@
-﻿namespace MD.Journal
+﻿using Newtonsoft.Json;
+
+namespace MD.Journal
 {
     public sealed class JournalEntry
     {
@@ -14,6 +16,7 @@
         {
         }
 
+        [JsonConstructor]
         public JournalEntry(
             string id,
             string title,
@@ -50,6 +53,8 @@
         public DateTime Date { get; }
         public IEnumerable<string> Tags { get; }
         public string RawContent { get; }
+
+        [JsonIgnore]
         public string[] Paragraphs { get; }
     }
 }

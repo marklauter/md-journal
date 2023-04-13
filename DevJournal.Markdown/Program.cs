@@ -1,6 +1,6 @@
 ﻿using MD.Journal;
+using Newtonsoft.Json;
 using System.Text;
-using System.Text.Json;
 
 var lines = new string[]
 {
@@ -27,9 +27,10 @@ var entry = JournalEntryBuilder.Create()
     .Build();
 
 await entry.SaveAsMarkdownAsync(CancellationToken.None);
+await entry.SaveAsJsonAsync(CancellationToken.None);
 
 Console.WriteLine();
-Console.WriteLine(JsonSerializer.Serialize(entry, new JsonSerializerOptions { WriteIndented = true }));
+Console.WriteLine(JsonConvert.SerializeObject(entry, Formatting.Indented));
 Console.WriteLine();
 Console.WriteLine("------------------");
 Console.WriteLine();
