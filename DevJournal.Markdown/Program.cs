@@ -1,5 +1,4 @@
-﻿using DevJournal.Markdown;
-using Grynwald.MarkdownGenerator;
+﻿using MD.Journal;
 using System.Text;
 using System.Text.Json;
 
@@ -19,36 +18,22 @@ var lines = new string[]
     "line 3",
 };
 
-var entry = new JournalEntry(
-    "title",
-    "author",
-    String.Join(Environment.NewLine, lines),
-    new string[] { "tag1", "tag2" });
+var entry = JournalEntryBuilder.Create()
+    .WithTitle("title")
+    .WithAuthor("author")
+    .WithSummary("summary")
+    .WithBody(String.Join(Environment.NewLine, lines))
+    .WithTags(new string[] { "tag1", "tag2" })
+    .Build();
 
-var mdTitle = new MdHeading(1, entry.Title);
-var mdByLine = new MdEmphasisSpan($"By {entry.Author}, {entry.Date:G}");
-var mdTags = new MdTextSpan($"{Environment.NewLine}{String.Join(' ', entry.Tags)}");
-var mdHeader = new MdContainerBlock(mdTitle, new MdParagraph(mdByLine, mdTags));
-
-var mdContent = new MdContainerBlock();
-for (var i = 0; i < entry.Paragraphs.Length; i++)
-{
-    mdContent.Add(new MdParagraph(new MdRawMarkdownSpan(entry.Paragraphs[i])));
-}
-
-var document = new MdDocument(mdHeader, mdContent);
-using var stream = new MemoryStream();
-document.Save(stream);
-
-using var file = new FileStream($"{entry.Id}.md", FileMode.OpenOrCreate, FileAccess.Write);
-stream.CopyTo(file);
-file.Flush();
+await entry.SaveAsMarkdownAsync(CancellationToken.None);
 
 Console.WriteLine();
 Console.WriteLine(JsonSerializer.Serialize(entry, new JsonSerializerOptions { WriteIndented = true }));
 Console.WriteLine();
 Console.WriteLine("------------------");
 Console.WriteLine();
-Console.WriteLine(Encoding.UTF8.GetString(stream.ToArray().AsSpan(3..)));
+using var md = entry.ToMarkdownStream();
+Console.WriteLine(Encoding.UTF8.GetString(md.GetBuffer()[3..((int)md.Length - 1)]));
 Console.WriteLine();
 Console.WriteLine();

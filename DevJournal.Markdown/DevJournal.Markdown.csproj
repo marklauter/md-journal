@@ -15,4 +15,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MD.Journal\MD.Journal.csproj" />
+  </ItemGroup>
+
 </Project>
