@@ -9,14 +9,17 @@ namespace MD.Journal.Tests
                 .WithTitle("title")
                 .WithAuthor("author")
                 .WithBody("body")
-                .WithTags($"{nameof(MapJournalEntryAsync_Creates_Files)}tagone", $"{nameof(MapJournalEntryAsync_Creates_Files)}tagtwo")
+                .WithTags("tagone", "tagtwo")
                 .Build();
 
-            var graph = new TagGraph(".");
+            var tagsPath = $@".\tags\{nameof(MapJournalEntryAsync_Creates_Files)}";
+            var graph = new TagGraph(tagsPath);
             var files = await graph.MapJournalEntryAsync(entry);
             Assert.True(File.Exists(files[0]));
             Assert.True(File.Exists(files[1]));
+            Assert.True(File.Exists(Path.Combine(tagsPath, "tags.txt")));
 
+            File.Delete(Path.Combine(tagsPath, "tags.txt"));
             foreach (var file in files)
             {
                 File.Delete(file);
@@ -30,20 +33,23 @@ namespace MD.Journal.Tests
                 .WithTitle("title")
                 .WithAuthor("author")
                 .WithBody("body")
-                .WithTags($"{nameof(JournalEntriesAsync_Returns_Files)}tagone", $"{nameof(JournalEntriesAsync_Returns_Files)}tagtwo")
+                .WithTags("tagone", "tagtwo")
                 .Build();
 
-            var graph = new TagGraph(".");
+            var tagsPath = $@".\tags\{nameof(JournalEntriesAsync_Returns_Files)}";
+            var graph = new TagGraph(tagsPath);
             var files = await graph.MapJournalEntryAsync(entry);
             Assert.True(File.Exists(files[0]));
             Assert.True(File.Exists(files[1]));
+            Assert.True(File.Exists(Path.Combine(tagsPath, "tags.txt")));
 
-            var ids = await graph.JournalEntriesAsync($"{nameof(JournalEntriesAsync_Returns_Files)}tagone");
+            var ids = await graph.JournalEntriesAsync("tagone");
             Assert.Contains(entry.Id, ids);
 
-            ids = await graph.JournalEntriesAsync($"{nameof(JournalEntriesAsync_Returns_Files)}tagtwo");
+            ids = await graph.JournalEntriesAsync("tagtwo");
             Assert.Contains(entry.Id, ids);
 
+            File.Delete(Path.Combine(tagsPath, "tags.txt"));
             foreach (var file in files)
             {
                 File.Delete(file);
@@ -57,18 +63,21 @@ namespace MD.Journal.Tests
                 .WithTitle("title")
                 .WithAuthor("author")
                 .WithBody("body")
-                .WithTags($"{nameof(Tags_Returns_Tags)}tagone", $"{nameof(Tags_Returns_Tags)}tagtwo")
+                .WithTags("tagone", "tagtwo")
                 .Build();
 
-            var graph = new TagGraph(".");
+            var tagsPath = $@".\tags\{nameof(Tags_Returns_Tags)}";
+            var graph = new TagGraph(tagsPath);
             var files = await graph.MapJournalEntryAsync(entry);
             Assert.True(File.Exists(files[0]));
             Assert.True(File.Exists(files[1]));
+            Assert.True(File.Exists(Path.Combine(tagsPath, "tags.txt")));
 
-            var tags = graph.Tags();
-            Assert.Contains($"{nameof(Tags_Returns_Tags)}tagone", tags);
-            Assert.Contains($"{nameof(Tags_Returns_Tags)}tagtwo", tags);
+            var tags = await graph.TagsAsync();
+            Assert.Contains("tagone", tags);
+            Assert.Contains("tagtwo", tags);
 
+            File.Delete(Path.Combine(tagsPath, "tags.txt"));
             foreach (var file in files)
             {
                 File.Delete(file);

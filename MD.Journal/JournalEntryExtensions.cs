@@ -67,20 +67,6 @@ namespace MD.Journal
 
         public static async Task SaveAsJsonAsync(
             this JournalEntry entry,
-            CancellationToken cancellationToken)
-        {
-            var fileName = $"{entry.Id}.json";
-            using var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-            using var streamWriter = new StreamWriter(file);
-            using var jsonWriter = new JsonTextWriter(streamWriter);
-            JsonSerializer
-                .Create(new JsonSerializerSettings { Formatting = Formatting.Indented })
-                .Serialize(jsonWriter, entry);
-            await file.FlushAsync(cancellationToken);
-        }
-
-        public static async Task SaveAsJsonAsync(
-            this JournalEntry entry,
             string path,
             CancellationToken cancellationToken)
         {
@@ -91,22 +77,12 @@ namespace MD.Journal
 
             _ = Directory.CreateDirectory(path);
             var fileName = Path.Combine(path, $"{entry.Id}.json");
-
             using var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             using var streamWriter = new StreamWriter(file);
             using var jsonWriter = new JsonTextWriter(streamWriter);
-            new JsonSerializer().Serialize(jsonWriter, entry);
-            await file.FlushAsync(cancellationToken);
-        }
-
-        public static async Task SaveAsMarkdownAsync(
-            this JournalEntry entry,
-            CancellationToken cancellationToken)
-        {
-            var fileName = $"{entry.Id}.md";
-            using var markdown = entry.ToMarkdownStream();
-            using var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-            await markdown.CopyToAsync(file, cancellationToken);
+            JsonSerializer
+                .Create(new JsonSerializerSettings { Formatting = Formatting.Indented })
+                .Serialize(jsonWriter, entry);
             await file.FlushAsync(cancellationToken);
         }
 
