@@ -1,5 +1,4 @@
 ﻿using Grynwald.MarkdownGenerator;
-using Newtonsoft.Json;
 
 namespace MD.Journal
 {
@@ -63,46 +62,6 @@ namespace MD.Journal
             stream.Position = 0;
 
             return stream;
-        }
-
-        public static async Task SaveAsJsonAsync(
-            this JournalEntry entry,
-            string path,
-            CancellationToken cancellationToken)
-        {
-            if (String.IsNullOrEmpty(path))
-            {
-                throw new ArgumentException($"'{nameof(path)}' cannot be null or empty.", nameof(path));
-            }
-
-            _ = Directory.CreateDirectory(path);
-            var fileName = Path.Combine(path, $"{entry.Id}.json");
-            using var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-            using var streamWriter = new StreamWriter(file);
-            using var jsonWriter = new JsonTextWriter(streamWriter);
-            JsonSerializer
-                .Create(new JsonSerializerSettings { Formatting = Formatting.Indented })
-                .Serialize(jsonWriter, entry);
-            await file.FlushAsync(cancellationToken);
-        }
-
-        public static async Task SaveAsMarkdownAsync(
-            this JournalEntry entry,
-            string path,
-            CancellationToken cancellationToken)
-        {
-            if (String.IsNullOrEmpty(path))
-            {
-                throw new ArgumentNullException(nameof(path));
-            }
-
-            _ = Directory.CreateDirectory(path);
-            var fileName = Path.Combine(path, $"{entry.Id}.md");
-
-            using var markdown = entry.ToMarkdownStream();
-            using var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write);
-            await markdown.CopyToAsync(file, cancellationToken);
-            await file.FlushAsync(cancellationToken);
         }
     }
 }

@@ -26,11 +26,8 @@ var entry = JournalEntryBuilder.Create()
     .WithTags(new string[] { "tag1", "tag2" })
     .Build();
 
-var path = ".";
-await entry.SaveAsMarkdownAsync(path, CancellationToken.None);
-await entry.SaveAsJsonAsync(path, CancellationToken.None);
-var graph = new TagGraph(path);
-_ = await graph.MapJournalEntryAsync(entry);
+var journal = new Journal(".");
+await journal.WriteAsync(entry, CancellationToken.None);
 
 Console.WriteLine();
 Console.WriteLine(JsonConvert.SerializeObject(entry, Formatting.Indented));
