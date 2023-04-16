@@ -70,7 +70,7 @@
             return this;
         }
 
-        public JournalEntryBuilder WithTags(IEnumerable<string> tags)
+        public JournalEntryBuilder WithTags(params string[] tags)
         {
             if (tags is null)
             {
@@ -88,7 +88,7 @@
                 this.author,
                 this.summary,
                 this.body,
-                this.tags);
+                this.tags.Order().Distinct().ToArray());
         }
     }
 }

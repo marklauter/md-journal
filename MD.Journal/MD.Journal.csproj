@@ -1,28 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	  <TargetFramework>net7.0</TargetFramework>
-	  <ImplicitUsings>enable</ImplicitUsings>
-	  <Nullable>enable</Nullable>
-	  <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 
-	  <PackageId>MD.Journal</PackageId>
-	  <Authors>Mark Lauter</Authors>
-	  <RepositoryUrl>https://github.com/marklauter/md-journal</RepositoryUrl>
-	  <PackageProjectUrl>https://github.com/marklauter/md-journal</PackageProjectUrl>
-	  <RepositoryType>GIT</RepositoryType>
-	  <PackageLicense>MIT License: https://github.com/marklauter/md-journal/blob/main/LICENSE</PackageLicense>
-	  <Title>Markdown Journal</Title>
-	  <GenerateDocumentationFile>False</GenerateDocumentationFile>
-	  <PackageReadmeFile>README.md</PackageReadmeFile>
-  </PropertyGroup>
+		<PackageId>MD.Journal</PackageId>
+		<Authors>Mark Lauter</Authors>
+		<RepositoryUrl>https://github.com/marklauter/md-journal</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/marklauter/md-journal</PackageProjectUrl>
+		<RepositoryType>GIT</RepositoryType>
+		<PackageLicense>MIT License: https://github.com/marklauter/md-journal/blob/main/LICENSE</PackageLicense>
+		<Title>Markdown Journal</Title>
+		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Grynwald.MarkdownGenerator" Version="3.0.106" />
@@ -32,5 +32,5 @@
 		</PackageReference>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
-	
+
 </Project>

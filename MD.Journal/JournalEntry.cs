@@ -11,7 +11,7 @@ namespace MD.Journal
             string author,
             string summary,
             string rawBody,
-            IEnumerable<string> tags)
+            string[] tags)
             : this(String.Empty, title, author, summary, rawBody, tags, DateTime.UtcNow)
         {
         }
@@ -23,7 +23,7 @@ namespace MD.Journal
             string author,
             string summary,
             string rawBody,
-            IEnumerable<string> tags,
+            string[] tags,
             DateTime date)
         {
             this.Date = date;
@@ -31,14 +31,14 @@ namespace MD.Journal
             this.Author = author ?? throw new ArgumentNullException(nameof(author));
             this.Summary = summary ?? String.Empty;
             this.Tags = tags is not null
-                ? tags.Order().Distinct()
-                : Enumerable.Empty<string>();
+                ? tags
+                : Array.Empty<string>();
 
             var idDate = date.ToString("s").Replace(':', '-');
             var idTitle = title.Replace("  ", " ").Replace(' ', '-');
             this.Name = $"{idDate}.{idTitle}";
             this.Id = String.IsNullOrEmpty(id)
-                ? $"journal-entry.{this.Name}.{Guid.NewGuid()}"
+                ? $"journal-entry.{this.Name}"
                 : id;
 
             this.RawContent = rawBody ?? throw new ArgumentNullException(nameof(rawBody));
@@ -51,7 +51,7 @@ namespace MD.Journal
         public string Author { get; }
         public string Summary { get; }
         public DateTime Date { get; }
-        public IEnumerable<string> Tags { get; }
+        public string[] Tags { get; }
         public string RawContent { get; }
 
         [JsonIgnore]

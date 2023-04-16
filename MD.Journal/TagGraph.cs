@@ -1,63 +1,73 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Immutable;
-
-namespace MD.Journal
+﻿namespace MD.Journal
 {
-    public readonly record struct TagGraph
+    public sealed class TagGraph
     {
-        private readonly ImmutableDictionary<string, ImmutableArray<string>> taggedDocuments = ImmutableDictionary<string, ImmutableArray<string>>.Empty;
+        private readonly string path;
 
-        public TagGraph MapDocument(string tag, string documentId)
+        public TagGraph(string path)
         {
-            if (String.IsNullOrWhiteSpace(documentId))
+            if (String.IsNullOrWhiteSpace(path))
             {
-                throw new ArgumentException($"'{nameof(documentId)}' cannot be null or whitespace.", nameof(documentId));
+                throw new ArgumentException($"'{nameof(path)}' cannot be null or whitespace.", nameof(path));
             }
 
-            var documents = this
-                .Documents(tag)
-                .Add(documentId);
+            path = Path.Combine(path, "tags");
 
-            return new TagGraph(this.taggedDocuments.SetItem(tag, documents));
+            if (!Directory.Exists(path))
+            {
+                _ = Directory.CreateDirectory(path);
+            }
+
+            this.path = path;
         }
 
-        public ImmutableArray<string> Documents(string tag)
+        public async Task<string[]> MapJournalEntryAsync(JournalEntry journalEntry)
+        {
+            if (journalEntry is null)
+            {
+                throw new ArgumentNullException(nameof(journalEntry));
+            }
+
+            var fileNames = new string[journalEntry.Tags.Length];
+            var i = 0;
+            foreach (var tag in journalEntry.Tags)
+            {
+                var fileName = Path.Combine(this.path, $"tag-map.{tag}.txt");
+                using var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write);
+                using var writer = new StreamWriter(file);
+                _ = writer.BaseStream.Seek(0, SeekOrigin.End);
+                await writer.WriteLineAsync(journalEntry.Id);
+                await writer.FlushAsync();
+                fileNames[i++] = fileName;
+            }
+
+            return fileNames;
+        }
+
+        public async Task<string[]> JournalEntriesAsync(string tag)
         {
             if (String.IsNullOrWhiteSpace(tag))
             {
                 throw new ArgumentException($"'{nameof(tag)}' cannot be null or whitespace.", nameof(tag));
             }
 
-            if (!this.taggedDocuments.TryGetValue(tag, out var documents))
+            var fileName = Path.Combine(this.path, $"tag-map.{tag}.txt");
+            return !File.Exists(fileName)
+                ? Array.Empty<string>()
+                : await File.ReadAllLinesAsync(fileName);
+        }
+
+        public string[] Tags()
+        {
+            var files = Directory.GetFiles(this.path, "tag-map.*.txt");
+            var tags = new string[files.Length];
+            for (var i = 0; i < files.Length; ++i)
             {
-                documents = ImmutableArray<string>.Empty;
+                var file = Path.GetFileName(files[i]);
+                tags[i] = file[8..^4];
             }
 
-            return documents;
-        }
-
-        public TagGraph() { }
-
-        private TagGraph(ImmutableDictionary<string, ImmutableArray<string>> taggedDocuments)
-        {
-            this.taggedDocuments = taggedDocuments;
-        }
-
-        public static TagGraph FromJson(string json)
-        {
-            if (String.IsNullOrWhiteSpace(json))
-            {
-                throw new ArgumentException($"'{nameof(json)}' cannot be null or whitespace.", nameof(json));
-            }
-
-            var taggedDocuments = JsonConvert.DeserializeObject<ImmutableDictionary<string, ImmutableArray<string>>>(json);
-            taggedDocuments ??= ImmutableDictionary<string, ImmutableArray<string>>.Empty;
-            return new TagGraph(taggedDocuments);
-        }
-
-        public string ToJson()
-        {
-            return JsonConvert.SerializeObject(this.taggedDocuments);
+            return tags;
         }
     }
 }
