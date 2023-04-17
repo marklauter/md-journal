@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MD.Journal.Windows (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "MD.Journal.Windows (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

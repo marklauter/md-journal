@@ -25,7 +25,7 @@ namespace MD.Journal
 
         public void Commit()
         {
-            this.RunCommand($"commit -m \"new journal entry\"");
+            this.RunCommand($"commit -m \"doc: new journal entry\"");
         }
 
         public void Push()
