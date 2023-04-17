@@ -23,6 +23,25 @@ namespace MD.Journal
             this.tagGraph = new TagGraph(Path.Combine(path, "tags"));
         }
 
+        public async Task<string> AuthorAsync()
+        {
+            var fileName = Path.Combine(this.path, "author.txt");
+            return !File.Exists(fileName)
+                ? String.Empty
+                : await File.ReadAllTextAsync(fileName);
+        }
+
+        public async Task AuthorAsync(string author)
+        {
+            if (String.IsNullOrWhiteSpace(author))
+            {
+                throw new ArgumentException($"'{nameof(author)}' cannot be null or whitespace.", nameof(author));
+            }
+
+            var fileName = Path.Combine(this.path, "author.txt");
+            await File.WriteAllTextAsync(fileName, author);
+        }
+
         public async Task<JournalEntry?> ReadAsync(string journalEntryId)
         {
             var fileName = Path.Combine(this.path, $"{journalEntryId}.json");
@@ -87,6 +106,11 @@ namespace MD.Journal
             using var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Write);
             await markdown.CopyToAsync(file, cancellationToken);
             await file.FlushAsync(cancellationToken);
+        }
+
+        public Task<string[]> TagsAsync()
+        {
+            return this.tagGraph.TagsAsync();
         }
     }
 }

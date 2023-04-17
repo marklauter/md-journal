@@ -5,7 +5,7 @@ namespace MD.Journal
 {
     public sealed class TagGraph
     {
-        private static readonly string TagsFileName = "tags.txt";
+        private const string TagsFileName = "tags.txt";
         private readonly string path;
 
         public TagGraph(string path)
