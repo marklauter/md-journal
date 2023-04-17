@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace MD.Journal
 {
-    public sealed class TagGraph
+    internal sealed class TagGraph
     {
         private const string TagsFileName = "tags.txt";
         private readonly string path;

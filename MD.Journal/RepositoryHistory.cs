@@ -7,7 +7,7 @@ namespace MD.Journal
         private const string RepositoryHistoryFileName = "repositories.txt";
         private const int HistoryLimit = 20;
 
-        public async Task AddRecentRepositoryAsync(string path)
+        public static async Task AddRecentRepositoryAsync(string path)
         {
             var lines = await File.ReadAllLinesAsync(RepositoryHistoryFileName);
             var entries = lines
@@ -49,7 +49,7 @@ namespace MD.Journal
             await File.WriteAllLinesAsync(RepositoryHistoryFileName, lines);
         }
 
-        public async Task<RepositoryHistoryEntry[]> RecentRepositoriesAsync()
+        public static async Task<RepositoryHistoryEntry[]> RecentRepositoriesAsync()
         {
             var lines = await File.ReadAllLinesAsync(RepositoryHistoryFileName);
             return lines

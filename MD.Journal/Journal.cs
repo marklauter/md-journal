@@ -4,7 +4,7 @@ namespace MD.Journal
 {
     public sealed class Journal
     {
-        private readonly string path;
+        public string Path { get; }
         private readonly TagGraph tagGraph;
 
         public Journal(string path)
@@ -19,13 +19,13 @@ namespace MD.Journal
                 _ = Directory.CreateDirectory(path);
             }
 
-            this.path = path;
-            this.tagGraph = new TagGraph(Path.Combine(path, "tags"));
+            this.Path = path;
+            this.tagGraph = new TagGraph(System.IO.Path.Combine(path, "tags"));
         }
 
         public async Task<string> AuthorAsync()
         {
-            var fileName = Path.Combine(this.path, "author.txt");
+            var fileName = System.IO.Path.Combine(this.Path, "author.txt");
             return !File.Exists(fileName)
                 ? String.Empty
                 : await File.ReadAllTextAsync(fileName);
@@ -38,13 +38,13 @@ namespace MD.Journal
                 throw new ArgumentException($"'{nameof(author)}' cannot be null or whitespace.", nameof(author));
             }
 
-            var fileName = Path.Combine(this.path, "author.txt");
+            var fileName = System.IO.Path.Combine(this.Path, "author.txt");
             await File.WriteAllTextAsync(fileName, author);
         }
 
         public async Task<JournalEntry?> ReadAsync(string journalEntryId)
         {
-            var fileName = Path.Combine(this.path, $"{journalEntryId}.json");
+            var fileName = System.IO.Path.Combine(this.Path, $"{journalEntryId}.json");
             if (!File.Exists(fileName))
             {
                 return null;
@@ -87,7 +87,7 @@ namespace MD.Journal
             JournalEntry journalEntry,
             CancellationToken cancellationToken)
         {
-            var fileName = Path.Combine(this.path, $"{journalEntry.Id}.json");
+            var fileName = System.IO.Path.Combine(this.Path, $"{journalEntry.Id}.json");
             using var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Write);
             using var streamWriter = new StreamWriter(file);
             using var jsonWriter = new JsonTextWriter(streamWriter);
@@ -101,7 +101,7 @@ namespace MD.Journal
             JournalEntry journalEntry,
             CancellationToken cancellationToken)
         {
-            var fileName = Path.Combine(this.path, $"{journalEntry.Id}.md");
+            var fileName = System.IO.Path.Combine(this.Path, $"{journalEntry.Id}.md");
             using var markdown = journalEntry.ToMarkdownStream();
             using var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Write);
             await markdown.CopyToAsync(file, cancellationToken);
