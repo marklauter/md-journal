@@ -23,25 +23,6 @@ namespace MD.Journal
             this.tagGraph = new TagGraph(System.IO.Path.Combine(path, "tags"));
         }
 
-        public async Task<string> AuthorAsync()
-        {
-            var fileName = System.IO.Path.Combine(this.Path, "author.txt");
-            return !File.Exists(fileName)
-                ? String.Empty
-                : await File.ReadAllTextAsync(fileName);
-        }
-
-        public async Task AuthorAsync(string author)
-        {
-            if (String.IsNullOrWhiteSpace(author))
-            {
-                throw new ArgumentException($"'{nameof(author)}' cannot be null or whitespace.", nameof(author));
-            }
-
-            var fileName = System.IO.Path.Combine(this.Path, "author.txt");
-            await File.WriteAllTextAsync(fileName, author);
-        }
-
         public async Task<JournalEntry?> ReadAsync(string journalEntryId)
         {
             var fileName = System.IO.Path.Combine(this.Path, $"{journalEntryId}.json");

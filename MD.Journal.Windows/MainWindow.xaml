@@ -8,9 +8,22 @@
     xmlns:local="using:MD.Journal.Windows"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Title="MD Journal">
 
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button x:Name="myButton" Click="myButton_Click">Click Me</Button>
-    </StackPanel>
+    <Grid ColumnSpacing="6" RowSpacing="6" Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Button Grid.Row="0" Grid.Column="1" x:Name="openRepositoryButton" Click="openRepositoryButton_Click">Open Existing Repository</Button>
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="Recent Repositories"/>
+        <ListView Grid.Row="2" Grid.Column="1" ItemsSource="{x:Bind RecentRepositories}" />
+    </Grid>
 </Window>

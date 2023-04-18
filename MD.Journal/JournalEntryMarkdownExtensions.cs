@@ -2,7 +2,7 @@
 
 namespace MD.Journal
 {
-    public static class JournalEntryExtensions
+    public static class JournalEntryMarkdownExtensions
     {
         public static MdDocument ToMarkdownDocument(this JournalEntry entry)
         {

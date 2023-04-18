@@ -2,19 +2,10 @@
 // Licensed under the MIT License.
 
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.Storage.Pickers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,11 +20,59 @@ namespace MD.Journal.Windows
         public MainWindow()
         {
             this.InitializeComponent();
+            this.RecentRepositories = new ObservableCollection<string>();
+            var path = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "MDJournal");
+            _ = Directory.CreateDirectory(path);
+            this.gitRepository = new GitRepository();
+            this.gitRepositoryHistory = new GitRepositoryHistory(path);
+            this.ReadRecentRepositories();
         }
 
-        private void myButton_Click(object sender, RoutedEventArgs e)
+        private async void openRepositoryButton_Click(object sender, RoutedEventArgs e)
         {
-            myButton.Content = "Clicked";
+            var folderPicker = new FolderPicker
+            {
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+                ViewMode = PickerViewMode.List,
+            };
+
+            folderPicker.FileTypeFilter.Add("*");
+
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);
+
+            var folder = await folderPicker.PickSingleFolderAsync();
+            this.journal = this.gitRepository.Open(folder.Path);
+            await this.gitRepositoryHistory.AddRecentRepositoryAsync(folder.Path);
+            var index = this.RecentRepositories.IndexOf(folder.Path);
+            if (index > -1)
+            {
+                this.RecentRepositories.RemoveAt(index);
+                this.RecentRepositories.Insert(0, folder.Path);
+            }
+            else
+            {
+                this.RecentRepositories.Insert(0, folder.Path);
+            }
+        }
+
+        public ObservableCollection<string> RecentRepositories { get; }
+        private Journal? journal;
+        private readonly GitRepository gitRepository;
+        private readonly GitRepositoryHistory gitRepositoryHistory;
+
+        private async void ReadRecentRepositories()
+        {
+            if (this.RecentRepositories.Count == 0)
+            {
+                var repos = await this.gitRepositoryHistory.RecentRepositoriesAsync();
+                foreach (var repo in repos)
+                {
+                    this.RecentRepositories.Add(repo.Path);
+                }
+            }
         }
     }
 }
