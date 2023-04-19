@@ -11,7 +11,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <!--ExtendsContentIntoTitleBar="True"-->
-
+    
     <Grid ColumnSpacing="10" RowSpacing="10" Margin="0" HorizontalAlignment="Stretch" Background="#222222">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

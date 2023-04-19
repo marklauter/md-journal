@@ -7,7 +7,12 @@ namespace MD.Journal
         public string Path { get; }
         private readonly TagGraph tagGraph;
 
-        public Journal(string path)
+        public static Journal Open(string path)
+        {
+            return new Journal(path);
+        }
+
+        private Journal(string path)
         {
             if (String.IsNullOrWhiteSpace(path))
             {

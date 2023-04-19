@@ -33,7 +33,7 @@ namespace MD.Journal.Windows.ViewModels
 
         public async Task<Journal> OpenJournalAsync(string path)
         {
-            var journal = new Journal(path);
+            var journal = Journal.Open(path);
             await this.recentJournals.TouchAsync(journal);
             await this.FillRecentRepositoriesAsync();
             return journal;

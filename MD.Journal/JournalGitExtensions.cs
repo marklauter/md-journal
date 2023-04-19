@@ -2,7 +2,7 @@
 
 namespace MD.Journal
 {
-    public static class JoiurnalGitExtensions
+    public static class JournalGitExtensions
     {
         public static (string stdout, string stderr) Commit(this Journal journal)
         {

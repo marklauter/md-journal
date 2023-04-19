@@ -26,7 +26,7 @@ var entry = JournalEntryBuilder.Create()
     .WithTags(new string[] { "tag1", "tag2" })
     .Build();
 
-var journal = new Journal(".");
+var journal = Journal.Open(".");
 await journal.WriteAsync(entry, CancellationToken.None);
 
 Console.WriteLine();
