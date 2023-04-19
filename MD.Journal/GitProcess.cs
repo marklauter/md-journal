@@ -17,7 +17,7 @@ namespace MD.Journal
 
             if (!IsGitRepository(path))
             {
-                throw new InvalidOperationException("path must contain git repository");
+                throw new InvalidOperationException("path is not a git repository");
             }
 
             this.path = path;
@@ -55,7 +55,7 @@ namespace MD.Journal
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    CreateNoWindow = false,
+                    CreateNoWindow = true,
                     WindowStyle = ProcessWindowStyle.Normal,
                     WorkingDirectory = path,
                 }
