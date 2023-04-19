@@ -54,12 +54,12 @@
 	  </Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Views\" />
-	</ItemGroup>
-	<ItemGroup>
 	  <Page Update="GetStartedWindow.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Views\" />
 	</ItemGroup>
 
 	<!-- 
