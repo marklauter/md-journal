@@ -28,7 +28,11 @@ namespace MD.Journal.Windows
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            this.window = new GetStartedWindow();
+            this.window = new GetStartedWindow
+            {
+                Title = "MD.Journal"
+            };
+
             this.window.Activate();
         }
 
