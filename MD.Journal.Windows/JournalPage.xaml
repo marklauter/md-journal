@@ -9,9 +9,39 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    DataContext="{x:Bind ViewModel}">
 
-    <Grid>
-
-    </Grid>
+    <StackPanel>
+        <TextBlock>I am a Journal Page</TextBlock>
+        <TextBlock Text="{Binding Path}"></TextBlock>
+        <ListView ItemsSource="{Binding Tags}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}"></TextBlock>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <ListView ItemsSource="{Binding JournalEntries}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Image Source="Assets/journal.png" Grid.Column="0" Height="38" VerticalAlignment="Center" Margin="0 10 10 10" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Top">
+                            <TextBlock Grid.Column="2" Text="{Binding Title}" FontSize="18" FontWeight="SemiBold"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="by" Margin="0 0 5 0" FontSize="16" />
+                                <TextBlock Grid.Column="0" Text="{Binding Author}" FontSize="16" />
+                                <TextBlock Grid.Column="1" Text="{Binding Date}" FontSize="16" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackPanel>
 </Page>

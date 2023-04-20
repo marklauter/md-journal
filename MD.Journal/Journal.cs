@@ -32,8 +32,19 @@ namespace MD.Journal
             }
 
             this.Path = path;
+
             this.jsonPath = System.IO.Path.Combine(path, JsonPathFolderName);
+            if (!Directory.Exists(this.jsonPath))
+            {
+                _ = Directory.CreateDirectory(this.jsonPath);
+            }
+
             this.markdownPath = System.IO.Path.Combine(path, MarkdownPathFolderName);
+            if (!Directory.Exists(this.markdownPath))
+            {
+                _ = Directory.CreateDirectory(this.markdownPath);
+            }
+
             this.journalIndex = new JournalIndex(path);
             this.tagGraph = new TagGraph(path);
         }

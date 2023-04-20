@@ -21,7 +21,7 @@ namespace MD.Journal
                 _ = Directory.CreateDirectory(path);
             }
 
-            this.indexFileName = Path.Combine(path, JournalIndexFolder, "journal-index.txt");
+            this.indexFileName = Path.Combine(path, "journal-index.txt");
         }
 
         public async Task InsertAsync(JournalEntry journalEntry)
@@ -44,13 +44,15 @@ namespace MD.Journal
 
         public async Task<JournalIndexEntry[]> ReadAsync(Pagination pagination)
         {
-            return (await File.ReadAllLinesAsync(this.indexFileName))
-                .Distinct()
-                .Select(JsonConvert.DeserializeObject<JournalIndexEntry>)
-                .OrderByDescending(entry => entry.Date)
-                .Skip(pagination.Skip)
-                .Take(pagination.Take)
-                .ToArray();
+            return File.Exists(this.indexFileName)
+                ? (await File.ReadAllLinesAsync(this.indexFileName))
+                    .Distinct()
+                    .Select(JsonConvert.DeserializeObject<JournalIndexEntry>)
+                    .OrderByDescending(entry => entry.Date)
+                    .Skip(pagination.Skip)
+                    .Take(pagination.Take)
+                    .ToArray()
+                : Array.Empty<JournalIndexEntry>();
         }
     }
 }

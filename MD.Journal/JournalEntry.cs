@@ -10,9 +10,9 @@ namespace MD.Journal
             string title,
             string author,
             string summary,
-            string rawBody,
+            string rawContent,
             string[] tags)
-            : this(String.Empty, title, author, summary, rawBody, tags, DateTime.UtcNow)
+            : this(String.Empty, title, author, summary, rawContent, tags, DateTime.UtcNow)
         {
         }
 
@@ -22,7 +22,7 @@ namespace MD.Journal
             string title,
             string author,
             string summary,
-            string rawBody,
+            string rawContent,
             string[] tags,
             DateTime date)
         {
@@ -41,8 +41,8 @@ namespace MD.Journal
                 ? $"journal-entry.{this.Name}"
                 : id;
 
-            this.RawContent = rawBody ?? throw new ArgumentNullException(nameof(rawBody));
-            this.Paragraphs = rawBody.Split(ParagraphSeparator, StringSplitOptions.None);
+            this.RawContent = rawContent ?? throw new ArgumentNullException(nameof(rawContent));
+            this.Paragraphs = rawContent.Split(ParagraphSeparator, StringSplitOptions.None);
         }
 
         public string Name { get; }

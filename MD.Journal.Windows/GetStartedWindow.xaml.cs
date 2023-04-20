@@ -30,12 +30,26 @@ namespace MD.Journal.Windows
 
         public GetStartedViewModel ViewModel { get; }
 
+        private void OpenMainWindow(Journal journal)
+        {
+            var journalPage = new JournalPage();
+            var mainWindow = new MainWindow
+            {
+                Content = journalPage,
+            };
+
+            mainWindow.Activate();
+            journalPage.Navigate(journal);
+            this.Close();
+        }
+
         private async void OpenJournalButtonClickAsync(object sender, RoutedEventArgs e)
         {
             var folder = await this.PickFolderAsync("Open journal");
             if (folder is not null)
             {
-                _ = await this.ViewModel.OpenJournalAsync(folder.Path);
+                var journal = await this.ViewModel.OpenJournalAsync(folder.Path);
+                this.OpenMainWindow(journal);
             }
         }
 
@@ -65,7 +79,8 @@ namespace MD.Journal.Windows
                 if (!String.IsNullOrEmpty(journalName))
                 {
                     folder = await folder.CreateFolderAsync(journalName);
-                    _ = await this.ViewModel.OpenJournalAsync(folder.Path);
+                    var journal = await this.ViewModel.OpenJournalAsync(folder.Path);
+                    this.OpenMainWindow(journal);
                 }
             }
         }
@@ -100,11 +115,12 @@ namespace MD.Journal.Windows
                 : String.Empty;
         }
 
-        private void RecentJournalsListViewItemClickAsync(object sender, Microsoft.UI.Xaml.Controls.ItemClickEventArgs e)
+        private async void RecentJournalsListViewItemClickAsync(object sender, Microsoft.UI.Xaml.Controls.ItemClickEventArgs e)
         {
             if (e.ClickedItem is RecentJournalEntry entry)
             {
-                _ = this.ViewModel.OpenJournalAsync(entry.Path);
+                var journal = await this.ViewModel.OpenJournalAsync(entry.Path);
+                this.OpenMainWindow(journal);
             }
         }
     }
