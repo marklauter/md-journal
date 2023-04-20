@@ -43,10 +43,12 @@ namespace MD.Journal.Tests
             Assert.True(File.Exists(files[1]));
             Assert.True(File.Exists(Path.Combine(tagsPath, "tags.txt")));
 
-            var ids = await graph.JournalEntriesAsync("tagone");
+            var ids = (await graph.JournalEntriesAsync("tagone"))
+                .Select(entry => entry.JournalEntryId);
             Assert.Contains(entry.Id, ids);
 
-            ids = await graph.JournalEntriesAsync("tagtwo");
+            ids = (await graph.JournalEntriesAsync("tagtwo"))
+                .Select(entry => entry.JournalEntryId);
             Assert.Contains(entry.Id, ids);
 
             File.Delete(Path.Combine(tagsPath, "tags.txt"));

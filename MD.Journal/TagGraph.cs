@@ -1,10 +1,12 @@
-﻿using System.Diagnostics.Contracts;
+﻿using Newtonsoft.Json;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
 namespace MD.Journal
 {
     internal sealed class TagGraph
     {
+        private const string TagsFolderName = "tags";
         private const string TagsFileName = "tags.txt";
         private readonly string path;
 
@@ -15,6 +17,7 @@ namespace MD.Journal
                 throw new ArgumentException($"'{nameof(path)}' cannot be null or whitespace.", nameof(path));
             }
 
+            path = Path.Combine(path, TagsFolderName);
             if (!Directory.Exists(path))
             {
                 _ = Directory.CreateDirectory(path);
@@ -25,12 +28,13 @@ namespace MD.Journal
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private string FileName(string tag)
+        private string GenerateTagFileName(string tag)
         {
             var tagid = (TagId)tag;
             return Path.Combine(this.path, $"tag-map.{tagid}.txt");
         }
 
+        // returns the filenames of the new tag graph indexes - useful only for unit testing right now
         public async Task<string[]> MapJournalEntryAsync(JournalEntry journalEntry)
         {
             if (journalEntry is null)
@@ -42,18 +46,15 @@ namespace MD.Journal
             var i = 0;
             foreach (var tag in journalEntry.Tags)
             {
-                var fileName = this.FileName(tag);
+                var fileName = this.GenerateTagFileName(tag);
                 var exists = File.Exists(fileName);
                 if (!exists)
                 {
                     await this.AppendTagsAsync(tag);
                 }
 
-                using var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write);
-                using var writer = new StreamWriter(file);
-                _ = writer.BaseStream.Seek(0, SeekOrigin.End);
-                await writer.WriteLineAsync(journalEntry.Id);
-                await writer.FlushAsync();
+                var newTagEntryLine = JsonConvert.SerializeObject(new JournalIndexEntry(journalEntry.Id, journalEntry.Date));
+                await File.AppendAllTextAsync(fileName, newTagEntryLine);
                 fileNames[i++] = fileName;
             }
 
@@ -63,24 +64,22 @@ namespace MD.Journal
         private async Task AppendTagsAsync(string tag)
         {
             var fileName = Path.Combine(this.path, TagsFileName);
-            using var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write);
-            using var writer = new StreamWriter(file);
-            _ = writer.BaseStream.Seek(0, SeekOrigin.End);
-            await writer.WriteLineAsync(tag);
-            await writer.FlushAsync();
+            await File.AppendAllTextAsync(fileName, tag);
         }
 
-        public async Task<string[]> JournalEntriesAsync(string tag)
+        public async Task<JournalIndexEntry[]> JournalEntriesAsync(string tag)
         {
             if (String.IsNullOrWhiteSpace(tag))
             {
                 throw new ArgumentException($"'{nameof(tag)}' cannot be null or whitespace.", nameof(tag));
             }
 
-            var fileName = this.FileName(tag);
+            var fileName = this.GenerateTagFileName(tag);
             return !File.Exists(fileName)
-                ? Array.Empty<string>()
-                : await File.ReadAllLinesAsync(fileName);
+                ? Array.Empty<JournalIndexEntry>()
+                : (await File.ReadAllLinesAsync(fileName))
+                    .Select(JsonConvert.DeserializeObject<JournalIndexEntry>)
+                    .ToArray();
         }
 
         public async Task<string[]> TagsAsync()

@@ -20,9 +20,15 @@ namespace MD.Journal.Windows
             this.InitializeComponent();
             this.Resize(900, 700);
             this.Center();
+
+            var userAppDataPath = System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "MDJournal");
+
+            this.ViewModel = new GetStartedViewModel(userAppDataPath);
         }
 
-        public GetStartedViewModel ViewModel { get; } = new GetStartedViewModel();
+        public GetStartedViewModel ViewModel { get; }
 
         private async void OpenJournalButtonClickAsync(object sender, RoutedEventArgs e)
         {

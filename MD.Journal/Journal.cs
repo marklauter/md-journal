@@ -4,7 +4,14 @@ namespace MD.Journal
 {
     public sealed class Journal
     {
+        private const string JsonPathFolderName = "json";
+        private const string MarkdownPathFolderName = "markdown";
+
         public string Path { get; }
+
+        private readonly string jsonPath;
+        private readonly string markdownPath;
+        private readonly JournalIndex journalIndex;
         private readonly TagGraph tagGraph;
 
         public static Journal Open(string path)
@@ -25,12 +32,15 @@ namespace MD.Journal
             }
 
             this.Path = path;
-            this.tagGraph = new TagGraph(System.IO.Path.Combine(path, "tags"));
+            this.jsonPath = System.IO.Path.Combine(path, JsonPathFolderName);
+            this.markdownPath = System.IO.Path.Combine(path, MarkdownPathFolderName);
+            this.journalIndex = new JournalIndex(path);
+            this.tagGraph = new TagGraph(path);
         }
 
         public async Task<JournalEntry?> ReadAsync(string journalEntryId)
         {
-            var fileName = System.IO.Path.Combine(this.Path, $"{journalEntryId}.json");
+            var fileName = System.IO.Path.Combine(this.jsonPath, $"{journalEntryId}.json");
             if (!File.Exists(fileName))
             {
                 return null;
@@ -38,6 +48,15 @@ namespace MD.Journal
 
             var json = await File.ReadAllTextAsync(fileName);
             return JsonConvert.DeserializeObject<JournalEntry>(json);
+        }
+
+        public async Task<JournalEntry[]> ReadAsync(Pagination pagination)
+        {
+            var journalIds = (await this.journalIndex.ReadAsync(pagination))
+                .Select(entry => entry.JournalEntryId)
+                .ToArray();
+
+            return await this.ReadAsync(journalIds);
         }
 
         public async Task<JournalEntry[]> ReadAsync(string[] journalEntryIds)
@@ -49,14 +68,23 @@ namespace MD.Journal
             }
 
 #pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
-            return (await Task.WhenAll(tasks)).Where(entry => entry is not null).ToArray();
+            return (await Task.WhenAll(tasks))
+                .OrderByDescending(entry => entry is not null ? entry.Date : DateTime.MinValue)
+                .Where(entry => entry is not null)
+                .ToArray();
 #pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
         }
 
-        public async Task<JournalEntry[]> FindAsync(string tag)
+        public async Task<JournalEntry[]> FindAsync(string tag, Pagination pagination)
         {
-            var entries = await this.tagGraph.JournalEntriesAsync(tag);
-            return await this.ReadAsync(entries);
+            var journalIds = (await this.tagGraph.JournalEntriesAsync(tag))
+                .OrderByDescending(tagEntry => tagEntry.Date)
+                .Skip(pagination.Skip)
+                .Take(pagination.Take)
+                .Select(tagEntry => tagEntry.JournalEntryId)
+                .ToArray();
+
+            return await this.ReadAsync(journalIds);
         }
 
         public async Task WriteAsync(
@@ -66,14 +94,15 @@ namespace MD.Journal
             await Task.WhenAll(
                 this.WriteAsJsonAsync(journalEntry, cancellationToken),
                 this.WriteAsMarkdownAsync(journalEntry, cancellationToken),
-                this.tagGraph.MapJournalEntryAsync(journalEntry));
+                this.tagGraph.MapJournalEntryAsync(journalEntry),
+                this.journalIndex.InsertAsync(journalEntry));
         }
 
         private async Task WriteAsJsonAsync(
             JournalEntry journalEntry,
             CancellationToken cancellationToken)
         {
-            var fileName = System.IO.Path.Combine(this.Path, $"{journalEntry.Id}.json");
+            var fileName = System.IO.Path.Combine(this.jsonPath, $"{journalEntry.Id}.json");
             using var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Write);
             using var streamWriter = new StreamWriter(file);
             using var jsonWriter = new JsonTextWriter(streamWriter);
@@ -87,7 +116,7 @@ namespace MD.Journal
             JournalEntry journalEntry,
             CancellationToken cancellationToken)
         {
-            var fileName = System.IO.Path.Combine(this.Path, $"{journalEntry.Id}.md");
+            var fileName = System.IO.Path.Combine(this.markdownPath, $"{journalEntry.Id}.md");
             using var markdown = journalEntry.ToMarkdownStream();
             using var file = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Write);
             await markdown.CopyToAsync(file, cancellationToken);
