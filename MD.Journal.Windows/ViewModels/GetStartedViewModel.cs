@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.IO;
+﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace MD.Journal.Windows.ViewModels
 {
     public sealed class GetStartedViewModel
     {
-        public ObservableCollection<RecentJournalEntry> RecentJournals { get; }
+        public ObservableCollection<RecentJournalEntry> RecentJournals { get; } = new();
 
         private readonly RecentJournals recentJournals;
 
-        public GetStartedViewModel()
+        public GetStartedViewModel(string path)
         {
-            var path = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "MDJournal");
-            this.RecentJournals = new ObservableCollection<RecentJournalEntry>();
+            if (System.String.IsNullOrWhiteSpace(path))
+            {
+                throw new System.ArgumentException($"'{nameof(path)}' cannot be null or whitespace.", nameof(path));
+            }
+
             this.recentJournals = new RecentJournals(path);
             _ = this.FillRecentRepositoriesAsync();
         }
