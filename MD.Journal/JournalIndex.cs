@@ -26,8 +26,9 @@ namespace MD.Journal
 
         public async Task InsertAsync(JournalEntry journalEntry)
         {
-            var newIndexLine = JsonConvert.SerializeObject(new JournalIndexEntry(journalEntry.Id, journalEntry.Date));
-            await File.AppendAllTextAsync(this.indexFileName, newIndexLine);
+            var newIndexLine = Enumerable
+                .Repeat(JsonConvert.SerializeObject(new JournalIndexEntry(journalEntry.Id, journalEntry.Date)), 1);
+            await File.AppendAllLinesAsync(this.indexFileName, newIndexLine);
         }
 
         public async Task PackAsync()

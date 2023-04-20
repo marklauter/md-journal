@@ -53,8 +53,9 @@ namespace MD.Journal
                     await this.AppendTagsAsync(tag);
                 }
 
-                var newTagEntryLine = JsonConvert.SerializeObject(new JournalIndexEntry(journalEntry.Id, journalEntry.Date));
-                await File.AppendAllTextAsync(fileName, newTagEntryLine);
+                var newTagEntryLine = Enumerable
+                    .Repeat(JsonConvert.SerializeObject(new JournalIndexEntry(journalEntry.Id, journalEntry.Date)), 1);
+                await File.AppendAllLinesAsync(fileName, newTagEntryLine);
                 fileNames[i++] = fileName;
             }
 
@@ -64,7 +65,7 @@ namespace MD.Journal
         private async Task AppendTagsAsync(string tag)
         {
             var fileName = Path.Combine(this.path, TagsFileName);
-            await File.AppendAllTextAsync(fileName, tag);
+            await File.AppendAllLinesAsync(fileName, Enumerable.Repeat(tag, 1));
         }
 
         public async Task<JournalIndexEntry[]> JournalEntriesAsync(string tag)
