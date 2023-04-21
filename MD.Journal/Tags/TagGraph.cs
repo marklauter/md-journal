@@ -27,11 +27,11 @@ namespace MD.Journal.Tags
             {
                 if (!tags.Contains(tag))
                 {
-                    await this.tagStore.WriteLineAsync(tag);
+                    await this.tagStore.AppendLineAsync(tag);
                 }
 
                 await this.stores[$"{(TagId)tag}.txt"]
-                    .WriteLineAsync(journalEntry.Id);
+                    .AppendLineAsync(journalEntry.Id);
             }
         }
 

@@ -9,20 +9,20 @@ namespace MD.Journal.Storage
         // first string is filename, second string is the content
         private static readonly ConcurrentDictionary<string, IEnumerable<string>> StoredItems = new();
 
-        public MemoryStore(string path, string fileName)
-            : base(path, fileName)
+        public MemoryStore(string path, string resourceName)
+            : base(path, resourceName)
         {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override Task OverWriteAllLinesAsync(IEnumerable<string> lines)
+        public override Task OverwriteAllLinesAsync(IEnumerable<string> lines)
         {
             _ = StoredItems.AddOrUpdate(this.Uri, lines, (fileName, lines) => lines);
             return Task.CompletedTask;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override Task WriteLineAsync(string value)
+        public override Task AppendLineAsync(string value)
         {
             _ = StoredItems.AddOrUpdate(this.Uri, new string[] { value }, (fileName, lines) => lines.Append(value));
             return Task.CompletedTask;
@@ -46,24 +46,25 @@ namespace MD.Journal.Storage
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override async Task WriteTextAsync(string value)
+        public override async Task AppendTextAsync(string value)
         {
             var lines = value.Split(Environment.NewLine);
             foreach (var line in lines)
             {
-                await this.WriteLineAsync(line);
+                await this.AppendLineAsync(line);
             }
         }
 
-        public override Task OverWriteAllTextAsync(string value)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override Task OverwriteAllTextAsync(string value)
         {
-            return this.OverWriteAllLinesAsync(value.Split(Environment.NewLine));
+            return this.OverwriteAllLinesAsync(value.Split(Environment.NewLine));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override async Task<string> ReadTextAsync()
         {
-            var lines = await this.ReadAllLinesAsync();
-            return String.Join(Environment.NewLine, lines);
+            return String.Join(Environment.NewLine, await this.ReadAllLinesAsync());
         }
     }
 }

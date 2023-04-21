@@ -65,7 +65,7 @@ namespace MD.Journal.Recents
             }
 
             await this.store
-                .OverWriteAllLinesAsync(items.Select(item => (string)item));
+                .OverwriteAllLinesAsync(items.Select(item => (string)item));
         }
     }
 }

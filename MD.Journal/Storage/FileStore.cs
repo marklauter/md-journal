@@ -1,40 +1,49 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace MD.Journal.Storage
 {
     public sealed class FileStore
         : Store
     {
-        public FileStore(string path, string fileName)
-            : base(path, fileName)
+        public FileStore(string path, string resourceName)
+            : base(path, resourceName)
         {
             _ = Directory.CreateDirectory(this.Path);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override Task OverWriteAllLinesAsync(IEnumerable<string> lines)
+        public override Task AppendLineAsync(string value)
+        {
+            return File.AppendAllLinesAsync(this.Uri, new string[] { value });
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override Task AppendTextAsync(string value)
+        {
+            return File.AppendAllTextAsync(this.Uri, value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override Task OverwriteAllLinesAsync(IEnumerable<string> lines)
         {
             return File.WriteAllLinesAsync(this.Uri, lines);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override Task OverWriteAllTextAsync(string value)
+        public override Task OverwriteAllTextAsync(string value)
         {
             return File.WriteAllTextAsync(this.Uri, value);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override Task WriteLineAsync(string value)
-        {
-            return File.AppendAllLinesAsync(this.Uri, new string[] { value });
-        }
-
+        [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override Task<IEnumerable<string>> ReadAllLinesAsync()
         {
             return this.ReadLinesAsync(Pagination.Default);
         }
 
+        [Pure]
         public override async Task<IEnumerable<string>> ReadLinesAsync(Pagination pagination)
         {
             if (!File.Exists(this.Uri))
@@ -70,12 +79,7 @@ namespace MD.Journal.Storage
             return values;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override Task WriteTextAsync(string value)
-        {
-            return File.AppendAllTextAsync(this.Uri, value);
-        }
-
+        [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override Task<string> ReadTextAsync()
         {

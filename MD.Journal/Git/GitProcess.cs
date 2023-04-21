@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MD.Journal.Git
 {
-    public sealed class GitProcess
+    internal sealed class GitProcess
     {
         private const string GitCommand = "git.exe";
         private readonly string path;

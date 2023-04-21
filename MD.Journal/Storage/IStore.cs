@@ -3,16 +3,16 @@
     public interface IStore
     {
         string Path { get; }
-        string Name { get; }
+        string ResourceName { get; }
         string Uri { get; }
 
-        Task OverWriteAllLinesAsync(IEnumerable<string> lines);
-        Task OverWriteAllTextAsync(string value);
+        Task AppendLineAsync(string value);
+        Task AppendTextAsync(string value);
+        Task OverwriteAllLinesAsync(IEnumerable<string> lines);
+        Task OverwriteAllTextAsync(string value);
         Task<IEnumerable<string>> ReadAllLinesAsync();
         Task<IEnumerable<string>> ReadLinesAsync(Pagination pagination);
         Task<string> ReadTextAsync();
-        Task WriteLineAsync(string value);
-        Task WriteTextAsync(string value);
     }
 }
 

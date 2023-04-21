@@ -28,7 +28,7 @@ namespace MD.Journal.Indexes
                 .Order()
                 .Select(item => (string)item);
 
-            await this.store.OverWriteAllLinesAsync(lines);
+            await this.store.OverwriteAllLinesAsync(lines);
         }
 
         [Pure]
@@ -44,7 +44,7 @@ namespace MD.Journal.Indexes
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Task WriteAsync(IndexEntry<TValue> entry)
         {
-            return this.store.WriteLineAsync((string)entry);
+            return this.store.AppendLineAsync((string)entry);
         }
     }
 }

@@ -93,19 +93,19 @@ namespace MD.Journal.Journals
         private Task WriteTocAsync(JournalEntry journalEntry)
         {
             // todo: create a toc class that can be converted to markdown with urls and then add that here instead of just the id
-            return this.tableOfContents.WriteLineAsync(journalEntry.Id);
+            return this.tableOfContents.AppendLineAsync(journalEntry.Id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private Task WriteAsJson(JournalEntry journalEntry)
         {
-            return this.stores[$"{journalEntry.Id}.json"].OverWriteAllTextAsync(JsonConvert.SerializeObject(journalEntry, Formatting.Indented));
+            return this.stores[$"{journalEntry.Id}.json"].OverwriteAllTextAsync(JsonConvert.SerializeObject(journalEntry, Formatting.Indented));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private Task WriteAsMarkdownAsync(JournalEntry journalEntry)
         {
-            return this.stores[$"{journalEntry.Id}.md"].OverWriteAllTextAsync(journalEntry.ToMarkdownString());
+            return this.stores[$"{journalEntry.Id}.md"].OverwriteAllTextAsync(journalEntry.ToMarkdownString());
         }
 
         [Pure]
