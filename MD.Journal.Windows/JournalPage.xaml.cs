@@ -24,7 +24,7 @@ namespace MD.Journal.Windows
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public void Navigate(Journal journal)
+        public void Navigate(Journals.Journal journal)
         {
             this.ViewModel = new JournalViewModel(journal);
             PropertyChanged?.Invoke(

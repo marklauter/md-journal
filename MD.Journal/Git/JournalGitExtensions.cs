@@ -1,10 +1,10 @@
 ﻿using System.Text;
 
-namespace MD.Journal
+namespace MD.Journal.Git
 {
     public static class JournalGitExtensions
     {
-        public static (string stdout, string stderr) Commit(this Journal journal)
+        public static (string stdout, string stderr) Commit(this Journals.Journal journal)
         {
             var git = new GitProcess(journal.Path);
 

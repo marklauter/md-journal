@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace MD.Journal
+namespace MD.Journal.Git
 {
     public sealed class GitProcess
     {
@@ -23,21 +24,25 @@ namespace MD.Journal
             this.path = path;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public (string stdout, string stderr) Stage()
         {
             return RunCommand("add .", this.path);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public (string stdout, string stderr) Commit()
         {
             return RunCommand($"commit -m \"doc: new journal entry\"", this.path);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public (string stdout, string stderr) Push()
         {
             return RunCommand("push", this.path);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsGitRepository(string path)
         {
             var (stdout, stderr) = RunCommand("rev-parse --git-dir", path);

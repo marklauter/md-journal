@@ -1,14 +1,15 @@
-﻿using System;
+﻿using MD.Journal.Journals;
+using MD.Journal.Storage;
+using System;
 using System.Collections.ObjectModel;
-using System.Threading;
 
 namespace MD.Journal.Windows.ViewModels
 {
     public sealed class JournalViewModel
     {
-        private readonly Journal journal;
+        private readonly Journals.Journal journal;
 
-        public JournalViewModel(Journal journal)
+        public JournalViewModel(Journals.Journal journal)
         {
             this.journal = journal ?? throw new ArgumentNullException(nameof(journal));
 
@@ -19,19 +20,21 @@ namespace MD.Journal.Windows.ViewModels
 
         private async void FillJournalEntriesAsync()
         {
-            var entries = await this.journal
-                .ReadAsync(new Pagination(0, Int32.MaxValue));
+            var entries = await this.journal.ReadAsync(new Pagination(0, Int32.MaxValue));
 
             this.JournalEntries.Clear();
             foreach (var entry in entries)
             {
-                this.JournalEntries.Add(entry);
+                if (entry is not null)
+                {
+                    this.JournalEntries.Add(entry);
+                }
             }
         }
 
         private async void FillTagsAsync()
         {
-            var tags = await this.journal.TagsAsync();
+            var tags = await this.journal.ReadTagsAsync();
 
             this.Tags.Clear();
             foreach (var tag in tags)
@@ -58,7 +61,10 @@ namespace MD.Journal.Windows.ViewModels
             this.JournalEntries.Clear();
             foreach (var entry in entries)
             {
-                this.JournalEntries.Add(entry);
+                if (entry is not null)
+                {
+                    this.JournalEntries.Add(entry);
+                }
             }
         }
 
@@ -88,7 +94,7 @@ namespace MD.Journal.Windows.ViewModels
                 .WithTags(new string[] { "tag1", "tag2" })
                 .Build();
 
-            await this.journal.WriteAsync(entry, CancellationToken.None);
+            await this.journal.WriteAsync(entry);
         }
     }
 }

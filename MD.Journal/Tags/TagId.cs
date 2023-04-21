@@ -1,4 +1,7 @@
-﻿namespace MD.Journal
+﻿using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
+
+namespace MD.Journal.Tags
 {
     public readonly struct TagId
     {
@@ -13,19 +16,25 @@
 
             this.value = tag
                 .ToLowerInvariant()
-                .Replace(" ", String.Empty);
+                .Replace(" ", "-");
         }
 
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string ToString()
         {
             return this.value;
         }
 
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator string(TagId tagId)
         {
             return tagId.value;
         }
 
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator TagId(string tag)
         {
             return new TagId(tag);

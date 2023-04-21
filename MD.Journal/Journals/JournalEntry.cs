@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace MD.Journal
+namespace MD.Journal.Journals
 {
     public sealed class JournalEntry
     {

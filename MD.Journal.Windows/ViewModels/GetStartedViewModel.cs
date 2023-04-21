@@ -1,13 +1,18 @@
-﻿using System.Collections.ObjectModel;
+﻿using MD.Journal.Recents;
+using MD.Journal.Storage;
+using Microsoft.Extensions.Options;
+using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace MD.Journal.Windows.ViewModels
 {
     public sealed class GetStartedViewModel
     {
-        public ObservableCollection<RecentJournalEntry> RecentJournals { get; } = new();
+        public ObservableCollection<RecentItem> RecentJournals { get; } = new();
 
-        private readonly RecentJournals recentJournals;
+        private readonly IStoreSet stores;
+        private readonly IRecentItems recentJournals;
 
         public GetStartedViewModel(string path)
         {
@@ -16,7 +21,9 @@ namespace MD.Journal.Windows.ViewModels
                 throw new System.ArgumentException($"'{nameof(path)}' cannot be null or whitespace.", nameof(path));
             }
 
-            this.recentJournals = new RecentJournals(path);
+            this.stores = new StoreSet<FileStore>(path);
+            this.recentJournals = new RecentItems(this.stores["recent-journals.json"], Options.Create(new RecentItemsOptions()));
+
             _ = this.FillRecentRepositoriesAsync();
         }
 
@@ -30,10 +37,10 @@ namespace MD.Journal.Windows.ViewModels
             }
         }
 
-        public async Task<Journal> OpenJournalAsync(string path)
+        public async Task<Journals.Journal> OpenJournalAsync(string path)
         {
-            var journal = Journal.Open(path);
-            await this.recentJournals.TouchAsync(journal);
+            var journal = Journals.Journal.Open<FileStore>(path);
+            await this.recentJournals.TouchAsync(new RecentItem(journal.Path, DateTime.UtcNow));
             await this.FillRecentRepositoriesAsync();
             return journal;
         }

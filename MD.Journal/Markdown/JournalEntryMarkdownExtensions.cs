@@ -1,6 +1,9 @@
 ﻿using Grynwald.MarkdownGenerator;
+using MD.Journal.Journals;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
-namespace MD.Journal
+namespace MD.Journal.Markdown
 {
     public static class JournalEntryMarkdownExtensions
     {
@@ -55,6 +58,8 @@ namespace MD.Journal
             return new MdDocument(header, body);
         }
 
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static MemoryStream ToMarkdownStream(this JournalEntry entry)
         {
             var stream = new MemoryStream();
@@ -62,6 +67,13 @@ namespace MD.Journal
             stream.Position = 0;
 
             return stream;
+        }
+
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string ToMarkdownString(this JournalEntry entry)
+        {
+            return entry.ToMarkdownDocument().ToString();
         }
     }
 }

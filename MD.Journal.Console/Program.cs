@@ -1,4 +1,6 @@
-﻿using MD.Journal;
+﻿using MD.Journal.Journals;
+using MD.Journal.Markdown;
+using MD.Journal.Storage;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -26,8 +28,8 @@ var entry = JournalEntryBuilder.Create()
     .WithTags(new string[] { "tag1", "tag2" })
     .Build();
 
-var journal = Journal.Open(".");
-await journal.WriteAsync(entry, CancellationToken.None);
+var journal = Journal.Open<FileStore>(".");
+await journal.WriteAsync(entry);
 
 Console.WriteLine();
 Console.WriteLine(JsonConvert.SerializeObject(entry, Formatting.Indented));

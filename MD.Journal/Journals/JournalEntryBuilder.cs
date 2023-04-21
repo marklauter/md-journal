@@ -1,4 +1,4 @@
-﻿namespace MD.Journal
+﻿namespace MD.Journal.Journals
 {
     public sealed class JournalEntryBuilder
     {
