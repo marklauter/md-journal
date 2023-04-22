@@ -28,5 +28,25 @@ namespace MD.Journal.Indexes
         {
             return JsonConvert.SerializeObject(entry);
         }
+
+        public static bool operator <(IndexEntry<TValue> left, IndexEntry<TValue> right)
+        {
+            return left.CompareTo(right) < 0;
+        }
+
+        public static bool operator <=(IndexEntry<TValue> left, IndexEntry<TValue> right)
+        {
+            return left.CompareTo(right) <= 0;
+        }
+
+        public static bool operator >(IndexEntry<TValue> left, IndexEntry<TValue> right)
+        {
+            return left.CompareTo(right) > 0;
+        }
+
+        public static bool operator >=(IndexEntry<TValue> left, IndexEntry<TValue> right)
+        {
+            return left.CompareTo(right) >= 0;
+        }
     }
 }

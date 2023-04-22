@@ -7,9 +7,6 @@ namespace MD.Journal.Recents
     public readonly record struct RecentItem(string Key, DateTime LastAccessUtc)
         : IComparable<RecentItem>
     {
-        [JsonIgnore]
-        public string LastAccessLocal => this.LastAccessUtc.ToLocalTime().ToShortDateString();
-
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int CompareTo(RecentItem other)

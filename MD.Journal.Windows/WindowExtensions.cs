@@ -16,7 +16,7 @@ namespace MD.Journal.Windows
     {
         public static void Resize(this Window window, int width, int height)
         {
-            var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+            var hWnd = WindowNative.GetWindowHandle(window);
             var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             var appWindow = AppWindow.GetFromWindowId(windowId);
             var size = new SizeInt32
