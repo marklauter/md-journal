@@ -56,5 +56,8 @@ namespace MD.Journal.Journals
 
         [JsonIgnore]
         public string[] Paragraphs { get; }
+
+        [JsonIgnore]
+        public string ByLine => $"by {this.Author} {this.Date.ToLocalTime().ToShortDateString()}";
     }
 }
