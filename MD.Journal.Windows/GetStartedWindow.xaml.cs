@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation and Contributors.
 // Licensed under the MIT License.
 
+using MD.Journal.Recents;
 using MD.Journal.Windows.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -117,9 +118,9 @@ namespace MD.Journal.Windows
 
         private async void RecentJournalsListViewItemClickAsync(object sender, Microsoft.UI.Xaml.Controls.ItemClickEventArgs e)
         {
-            if (e.ClickedItem is RecentJournal entry)
+            if (e.ClickedItem is RecentItem entry)
             {
-                var journal = await this.ViewModel.OpenJournalAsync(entry.Path);
+                var journal = await this.ViewModel.OpenJournalAsync(entry.Key);
                 this.OpenMainWindow(journal);
             }
         }
