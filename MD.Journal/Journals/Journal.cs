@@ -26,6 +26,7 @@ namespace MD.Journal.Journals
         private readonly TagGraph tagGraph;
 
         public string Path { get; }
+        public string Name { get; }
 
         private Journal(string path, IStoreSet stores)
         {
@@ -35,6 +36,7 @@ namespace MD.Journal.Journals
             }
 
             this.Path = path;
+            this.Name = System.IO.Path.GetFileName(path);
             this.stores = stores;
             this.tagGraph = new TagGraph(stores);
             this.recentAuthors = new RecentItems(stores["recent-authors.json"], Options.Create(new RecentItemsOptions()));
@@ -110,9 +112,10 @@ namespace MD.Journal.Journals
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Task<IEnumerable<string>> ReadTagsAsync()
+        public async Task<IEnumerable<string>> ReadTagsAsync()
         {
-            return this.tagGraph.ReadTagsAsync();
+            return (await this.tagGraph.ReadTagsAsync())
+                .Order();
         }
     }
 }

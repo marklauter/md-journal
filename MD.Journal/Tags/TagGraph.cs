@@ -45,9 +45,11 @@ namespace MD.Journal.Tags
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Task<IEnumerable<string>> ReadTagsAsync()
+        public async Task<IEnumerable<string>> ReadTagsAsync()
         {
-            return this.tagStore.ReadAllLinesAsync();
+            return (await this.tagStore.ReadAllLinesAsync())
+                .Where(tag => !String.IsNullOrWhiteSpace(tag))
+                .Distinct();
         }
     }
 }
