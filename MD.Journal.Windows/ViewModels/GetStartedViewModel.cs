@@ -3,36 +3,13 @@ using MD.Journal.Storage;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace MD.Journal.Windows.ViewModels
 {
-    public sealed class RecentJournal
-    {
-        public RecentJournal(RecentItem recentItem)
-        {
-            this.Name = System.IO.Path.GetFileName(recentItem.Key);
-            this.Path = recentItem.Key;
-            this.LastAccessLocal = recentItem.LastAccessUtc.ToLocalTime().ToShortDateString();
-        }
-
-        public string Name { get; }
-        public string Path { get; }
-        public string LastAccessLocal { get; }
-
-        [Pure]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator RecentJournal(RecentItem recentItem)
-        {
-            return new RecentJournal(recentItem);
-        }
-    }
-
     public sealed class GetStartedViewModel
     {
-        public ObservableCollection<RecentJournal> RecentJournals { get; } = new();
+        public ObservableCollection<RecentItem> RecentJournals { get; } = new();
 
         private readonly IStoreSet stores;
         private readonly IRecentItems recentJournals;
