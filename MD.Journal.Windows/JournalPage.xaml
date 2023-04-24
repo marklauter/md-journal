@@ -5,6 +5,7 @@
     x:Class="MD.Journal.Windows.JournalPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="using:System"
     xmlns:local="using:MD.Journal.Windows"
     xmlns:vm="using:MD.Journal.Windows.ViewModels"
     xmlns:mdj="using:MD.Journal.Journals"
@@ -22,15 +23,15 @@
             <!-- tag title -->
             <RowDefinition Height="Auto" />
             <!-- tags -->
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" MaxHeight="160" />
             <!-- journal entry title -->
             <RowDefinition Height="Auto" />
             <!-- journal entry list -->
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
+
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" MaxWidth="400" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -44,20 +45,21 @@
             VerticalAlignment="Top" 
             HorizontalAlignment="Left"/>
 
-        <StackPanel Grid.Row="1" Grid.Column="0">
-            <TextBlock Text="{x:Bind ViewModel.Journal.Name}"  Margin="5 10 20 00" FontSize="26" />
-            <TextBlock Text="{x:Bind ViewModel.Journal.Path}"  Margin="5 00 20 10" FontSize="18" />
+        <StackPanel Grid.Row="1" Grid.Column="0" Margin="10 0 0 0">
+            <TextBlock Text="{x:Bind ViewModel.Journal.Name}" FontSize="26" />
+            <TextBlock Text="{x:Bind ViewModel.Journal.Path}" FontSize="18" />
         </StackPanel>
 
         <TextBlock 
             Text="Tags" 
             Grid.Row="2"
             Grid.Column="0"
-            Margin="5 10 20 10" 
+            Margin="10 0 0 0"
             FontSize="26" />
         <GridView 
             Grid.Row="3"
             Grid.Column="0"
+            Margin="10 0 0 0"
             x:Name="TagsGridView"
             ItemsSource="{x:Bind ViewModel.Tags}"
             IsItemClickEnabled="True"
@@ -66,17 +68,24 @@
             ScrollViewer.VerticalScrollMode="Auto"
             ScrollViewer.VerticalScrollBarVisibility="Auto"
             ScrollViewer.HorizontalScrollMode="Auto"
-            ScrollViewer.HorizontalScrollBarVisibility="Auto"            />
+            ScrollViewer.HorizontalScrollBarVisibility="Auto">
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="sys:String">
+                    <TextBlock Text="{x:Bind}" FontSize="16" />
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
 
         <TextBlock 
             Text="Journal Entries" 
             Grid.Row="4"
             Grid.Column="0"
-            Margin="5 10 20 10" 
+            Margin="10"
             FontSize="26" />
-        <ListView 
+        <ListView
             Grid.Row="5"
             Grid.Column="0"
+            Margin="10 0 0 0"
             x:Name="JournalEntriesListView" 
             ItemsSource="{x:Bind ViewModel.JournalEntries}"
             SelectionChanged="JournalEntriesListViewSelectionChanged"
@@ -86,26 +95,53 @@
             ScrollViewer.VerticalScrollMode="Auto">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="mdj:JournalEntry">
-                    <Grid>
+                    <Grid Padding="0 0 0 10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Image Source="Assets/journal.png" Grid.Column="0" Height="38" VerticalAlignment="Center" Margin="0 5 10 10" />
-                        <StackPanel Grid.Column="1" VerticalAlignment="Top">
-                            <TextBlock Grid.Column="2" Text="{x:Bind Title}" FontSize="18" />
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="by" Margin="0 0 5 0" FontSize="14" />
-                                <TextBlock Grid.Column="0" Text="{x:Bind Author}" Margin="0 0 10 0" FontSize="14" />
-                                <TextBlock Grid.Column="1" Text="{x:Bind Date}" FontSize="14" />
-                            </StackPanel>
-                        </StackPanel>
+                        <Image 
+                            Grid.Column="0" 
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Source="Assets/journal.png" 
+                            Height="38" 
+                            VerticalAlignment="Center" 
+                            Margin="0 0 10 0" />
+                        <TextBlock 
+                            Grid.Column="1" 
+                            Grid.Row="0"
+                            Text="{x:Bind Title}" 
+                            VerticalAlignment="Center"
+                            FontSize="18" />
+                        <TextBlock 
+                            Grid.Column="1" 
+                            Grid.Row="1"
+                            Text="{x:Bind ByLine}" 
+                            FontSize="12" 
+                            VerticalAlignment="Center" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
 
+        <!--Background="{ThemeResource TextBoxBackgroundThemeBrush}"
+            Foreground="{ThemeResource TextBoxForegroundThemeBrush}"
+            Header1Foreground="{ThemeResource TextBoxForegroundThemeBrush}"
+            Header2Foreground="{ThemeResource TextBoxForegroundThemeBrush}"
+            Header3Foreground="{ThemeResource TextBoxForegroundThemeBrush}"
+            Header4Foreground="{ThemeResource TextBoxForegroundThemeBrush}"
+            Header5Foreground="{ThemeResource TextBoxForegroundThemeBrush}"
+            Header6Foreground="{ThemeResource TextBoxForegroundThemeBrush}"-->
         <controls:MarkdownTextBlock
+            BorderBrush="{ThemeResource TextBoxBorderThemeBrush}"
+            BorderThickness="1"
+            Padding="10"
+            Margin="10 0 0 0"
             Grid.Row="1" 
             Grid.Column="1" 
             Grid.RowSpan="5"
