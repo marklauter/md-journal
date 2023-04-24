@@ -6,42 +6,115 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:MD.Journal.Windows"
+    xmlns:vm="using:MD.Journal.Windows.ViewModels"
+    xmlns:mdj="using:MD.Journal.Journals"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    DataContext="{x:Bind ViewModel}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <StackPanel>
-        <TextBlock>I am a Journal Page</TextBlock>
-        <TextBlock Text="{Binding Path}"></TextBlock>
-        <ListView ItemsSource="{Binding Tags}">
+    <Grid ColumnSpacing="10" RowSpacing="10" HorizontalAlignment="Stretch" Margin="10">
+        <Grid.RowDefinitions>
+            <!-- image row -->
+            <RowDefinition Height="Auto" />
+            <!-- journal title -->
+            <RowDefinition Height="Auto" />
+            <!-- tag title -->
+            <RowDefinition Height="Auto" />
+            <!-- tags -->
+            <RowDefinition Height="Auto" />
+            <!-- journal entry title -->
+            <RowDefinition Height="Auto" />
+            <!-- journal entry list -->
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Image 
+            Source="Assets/md.journal.white.png" 
+            Grid.Row="0" 
+            Grid.Column="0" 
+            Grid.ColumnSpan="2" 
+            Height="32" 
+            Margin="10" 
+            VerticalAlignment="Top" 
+            HorizontalAlignment="Left"/>
+
+        <StackPanel Grid.Row="1" Grid.Column="0">
+            <TextBlock Text="{x:Bind ViewModel.Journal.Name}"  Margin="5 10 20 00" FontSize="26" />
+            <TextBlock Text="{x:Bind ViewModel.Journal.Path}"  Margin="5 00 20 10" FontSize="18" />
+        </StackPanel>
+
+        <TextBlock 
+            Text="Tags" 
+            Grid.Row="2"
+            Grid.Column="0"
+            Margin="5 10 20 10" 
+            FontSize="26" />
+        <GridView 
+            Grid.Row="3"
+            Grid.Column="0"
+            x:Name="TagsGridView"
+            ItemsSource="{x:Bind ViewModel.Tags}"
+            IsItemClickEnabled="True"
+            SelectionChanged="TagsGridViewSelectionChanged"
+            SelectionMode="Single"
+            ScrollViewer.VerticalScrollMode="Auto"
+            ScrollViewer.VerticalScrollBarVisibility="Auto"
+            ScrollViewer.HorizontalScrollMode="Auto"
+            ScrollViewer.HorizontalScrollBarVisibility="Auto"            />
+
+        <TextBlock 
+            Text="Journal Entries" 
+            Grid.Row="4"
+            Grid.Column="0"
+            Margin="5 10 20 10" 
+            FontSize="26" />
+        <ListView 
+            Grid.Row="5"
+            Grid.Column="0"
+            x:Name="JournalEntriesListView" 
+            ItemsSource="{x:Bind ViewModel.JournalEntries}"
+            SelectionChanged="JournalEntriesListViewSelectionChanged"
+            IsItemClickEnabled="True" 
+            SelectionMode="Single" 
+            ScrollViewer.VerticalScrollBarVisibility="Auto" 
+            ScrollViewer.VerticalScrollMode="Auto">
             <ListView.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding}"></TextBlock>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-        <ListView ItemsSource="{Binding JournalEntries}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="mdj:JournalEntry">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Image Source="Assets/journal.png" Grid.Column="0" Height="38" VerticalAlignment="Center" Margin="0 10 10 10" />
+                        <Image Source="Assets/journal.png" Grid.Column="0" Height="38" VerticalAlignment="Center" Margin="0 5 10 10" />
                         <StackPanel Grid.Column="1" VerticalAlignment="Top">
-                            <TextBlock Grid.Column="2" Text="{Binding Title}" FontSize="18" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="2" Text="{x:Bind Title}" FontSize="18" />
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="by" Margin="0 0 5 0" FontSize="16" />
-                                <TextBlock Grid.Column="0" Text="{Binding Author}" FontSize="16" />
-                                <TextBlock Grid.Column="1" Text="{Binding Date}" FontSize="16" />
+                                <TextBlock Text="by" Margin="0 0 5 0" FontSize="14" />
+                                <TextBlock Grid.Column="0" Text="{x:Bind Author}" Margin="0 0 10 0" FontSize="14" />
+                                <TextBlock Grid.Column="1" Text="{x:Bind Date}" FontSize="14" />
                             </StackPanel>
                         </StackPanel>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-    </StackPanel>
+
+        <controls:MarkdownTextBlock
+            Grid.Row="1" 
+            Grid.Column="1" 
+            Grid.RowSpan="5"
+            Text="{x:Bind ViewModel.CurrentJournalEntryMarkdown}" 
+            x:DefaultBindMode="OneWay"
+            ScrollViewer.ZoomMode="Enabled"
+            ScrollViewer.VerticalScrollMode="Auto"
+            ScrollViewer.VerticalScrollBarVisibility="Auto"
+            ScrollViewer.HorizontalScrollMode="Auto"
+            ScrollViewer.HorizontalScrollBarVisibility="Auto" />
+    </Grid>
 </Page>
