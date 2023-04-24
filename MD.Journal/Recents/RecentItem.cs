@@ -55,5 +55,8 @@ namespace MD.Journal.Recents
         {
             return JsonConvert.SerializeObject(recentItem);
         }
+
+        [JsonIgnore]
+        public string LastAccessLocal => this.LastAccessUtc.ToLocalTime().ToShortDateString();
     }
 }
