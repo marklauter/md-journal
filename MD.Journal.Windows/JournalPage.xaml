@@ -43,12 +43,6 @@
             HorizontalAlignment="Left"
             Tapped="MDJournalLogoTapped" />
 
-        <AutoSuggestBox 
-            Grid.Row="0"
-            Grid.Column="1"
-            PlaceholderText="Search"
-            ItemsSource="{x:Bind ViewModel.SearchText}" />
-
         <StackPanel Grid.Row="1" Grid.Column="0">
             <TextBlock Text="{x:Bind ViewModel.Journal.Name}" FontSize="26" FontWeight="SemiBold" />
             <TextBlock Text="{x:Bind ViewModel.Journal.Path}" FontSize="18" />
@@ -56,9 +50,7 @@
 
         <StackPanel 
             Grid.Row="2"
-            Grid.Column="0"
-            Orientation="Horizontal"
-            VerticalAlignment="Center">
+            Grid.Column="0">
             <TextBlock 
                 Text="Tags" 
                 FontSize="26" 
@@ -69,6 +61,9 @@
                 ItemsSource="{x:Bind ViewModel.Tags}"
                 SelectionChanged="TagsComboBoxSelectionChanged" 
                 VerticalAlignment="Center" />
+            <AutoSuggestBox 
+                PlaceholderText="Search"
+                ItemsSource="{x:Bind ViewModel.SearchText}" />
         </StackPanel>
 
         <TextBlock 
@@ -150,19 +145,41 @@
             Header4Foreground="{ThemeResource TextBoxForegroundThemeBrush}"
             Header5Foreground="{ThemeResource TextBoxForegroundThemeBrush}"
             Header6Foreground="{ThemeResource TextBoxForegroundThemeBrush}"-->
-        <controls:MarkdownTextBlock
-            BorderBrush="{ThemeResource TextBoxBorderThemeBrush}"
-            BorderThickness="1"
-            Padding="20"
-            Grid.Row="1" 
+        <Grid
+            Grid.Row="0" 
             Grid.Column="1" 
-            Grid.RowSpan="5"
-            Text="{x:Bind ViewModel.CurrentJournalEntryMarkdown}" 
-            x:DefaultBindMode="OneWay"
-            ScrollViewer.ZoomMode="Enabled"
-            ScrollViewer.VerticalScrollMode="Auto"
-            ScrollViewer.VerticalScrollBarVisibility="Auto"
-            ScrollViewer.HorizontalScrollMode="Auto"
-            ScrollViewer.HorizontalScrollBarVisibility="Auto" />
+            Grid.RowSpan="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <ScrollViewer
+                Grid.Row="0"
+                BorderBrush="{ThemeResource TextBoxBorderThemeBrush}"
+                BorderThickness="1"
+                VerticalScrollMode="Auto"
+                VerticalScrollBarVisibility="Auto"
+                HorizontalScrollMode="Auto"
+                HorizontalScrollBarVisibility="Auto">
+                <TextBlock 
+                    Padding="20"
+                    Text="{x:Bind ViewModel.CurrentJournalEntryMarkdown}" 
+                    x:DefaultBindMode="OneWay" />
+            </ScrollViewer>
+
+            <ScrollViewer
+                Grid.Row="1"
+                BorderBrush="{ThemeResource TextBoxBorderThemeBrush}"
+                BorderThickness="1"
+                VerticalScrollMode="Auto"
+                VerticalScrollBarVisibility="Auto"
+                HorizontalScrollMode="Auto"
+                HorizontalScrollBarVisibility="Auto">
+                <controls:MarkdownTextBlock
+                    Padding="20"
+                    Text="{x:Bind ViewModel.CurrentJournalEntryMarkdown}" 
+                    x:DefaultBindMode="OneWay" />
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Page>

@@ -34,7 +34,5 @@ namespace MD.Journal.Windows
         {
             _ = this.RootFrame.Navigate(pageType, parameter, transition);
         }
-
-        //public Border TitleBar => this.AppTitleBar;
     }
 }

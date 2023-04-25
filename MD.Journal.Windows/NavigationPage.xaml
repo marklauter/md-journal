@@ -8,26 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <!--<StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-        <StackPanel Orientation="Horizontal">
-            --><!--<Button VerticalAlignment="Center" Height="36" Width="36" Margin="5 5 5 5">
-                <TextBlock Text="&lt;" VerticalAlignment="Center" FontSize="18" FontWeight="Bold" />
-            </Button>--><!--
-            <Border
-                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                Margin="2 0 0 0"
-                x:Name="AppTitleBar"
-                Height="{Binding ElementName=NavigationViewControl, Path=CompactPaneLength}"
-                AutomationProperties.AutomationId="AppTitleBar"
-                IsHitTestVisible="True">
-                <Image Height="36" Source="ms-appx:///Assets/md.journal.white.png" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5 5 0 5" />
-            </Border>
-        </StackPanel>-->
-
-        <Frame x:Name="RootFrame">
-        </Frame>
-    <!--</StackPanel>-->
+    <Frame x:Name="RootFrame">
+    </Frame>
 </Page>
 
     

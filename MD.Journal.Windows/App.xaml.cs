@@ -34,10 +34,8 @@ namespace MD.Journal.Windows
             {
                 Title = "MD.Journal",
                 Content = RootPage,
-                //ExtendsContentIntoTitleBar = true,
             };
 
-            //this.window.SetTitleBar(RootPage.TitleBar);
             Navigate(typeof(GetStartedPage));
             this.window.Activate();
         }
