@@ -4,6 +4,7 @@ using MD.Journal.Recents;
 using MD.Journal.Windows.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using System;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -28,7 +29,7 @@ namespace MD.Journal.Windows
 
         private void OpenJournal(Journals.Journal journal)
         {
-            App.Navigate(typeof(JournalPage), journal);
+            App.Navigate(typeof(JournalPage), journal, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
         private async void OpenJournalButtonClickAsync(object sender, RoutedEventArgs e)

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media.Animation;
 using System;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -32,24 +33,31 @@ namespace MD.Journal.Windows
             this.window = new MainWindow
             {
                 Title = "MD.Journal",
-                Content = NavigationPage,
+                Content = RootPage,
+                //ExtendsContentIntoTitleBar = true,
             };
 
+            //this.window.SetTitleBar(RootPage.TitleBar);
             Navigate(typeof(GetStartedPage));
             this.window.Activate();
         }
 
         public static void Navigate(Type pageType)
         {
-            NavigationPage.Navigate(pageType);
+            RootPage.Navigate(pageType);
         }
 
         public static void Navigate(Type pageType, object parameter)
         {
-            NavigationPage.Navigate(pageType, parameter);
+            RootPage.Navigate(pageType, parameter);
         }
 
-        private static readonly NavigationPage NavigationPage = new();
+        public static void Navigate(Type pageType, object? parameter, NavigationTransitionInfo transition)
+        {
+            RootPage.Navigate(pageType, parameter, transition);
+        }
+
+        private static readonly NavigationPage RootPage = new();
         private Window? window;
     }
 }

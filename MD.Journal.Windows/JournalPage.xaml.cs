@@ -3,6 +3,7 @@
 using MD.Journal.Journals;
 using MD.Journal.Windows.ViewModels;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System.ComponentModel;
 using System.Linq;
@@ -54,7 +55,7 @@ namespace MD.Journal.Windows
 
         private void MDJournalLogoTapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            App.Navigate(typeof(GetStartedPage));
+            App.Navigate(typeof(GetStartedPage), null, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromLeft });
         }
 
         private void TagsComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)

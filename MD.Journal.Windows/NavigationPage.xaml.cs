@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using System;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -21,12 +22,19 @@ namespace MD.Journal.Windows
 
         public void Navigate(Type pageType)
         {
-            _ = this.ContentFrame.Navigate(pageType);
+            _ = this.RootFrame.Navigate(pageType);
         }
 
         public void Navigate(Type pageType, object parameter)
         {
-            _ = this.ContentFrame.Navigate(pageType, parameter);
+            _ = this.RootFrame.Navigate(pageType, parameter);
         }
+
+        public void Navigate(Type pageType, object? parameter, NavigationTransitionInfo transition)
+        {
+            _ = this.RootFrame.Navigate(pageType, parameter, transition);
+        }
+
+        //public Border TitleBar => this.AppTitleBar;
     }
 }
