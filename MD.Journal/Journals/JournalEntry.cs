@@ -61,6 +61,9 @@ namespace MD.Journal.Journals
         public string DateLocal => this.Date.ToLocalTime().ToShortDateString();
 
         [JsonIgnore]
+        public string ShortSummary => this.Summary.Length > 36 ? $"{this.Summary[..36]}..." : this.Summary;
+
+        [JsonIgnore]
         public string TagsCsv => String.Join(", ", this.Tags);
 
         [JsonIgnore]

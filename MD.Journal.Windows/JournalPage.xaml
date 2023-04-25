@@ -38,10 +38,10 @@
             Source="Assets/md.journal.white.png" 
             Grid.Row="0" 
             Grid.Column="0" 
-            Height="32" 
+            Height="38" 
             VerticalAlignment="Top" 
             HorizontalAlignment="Left"
-            Tapped="MDJournalLogoTapped"/>
+            Tapped="MDJournalLogoTapped" />
 
         <AutoSuggestBox 
             Grid.Row="0"
@@ -50,8 +50,8 @@
             ItemsSource="{x:Bind ViewModel.SearchText}" />
 
         <StackPanel Grid.Row="1" Grid.Column="0">
-            <TextBlock Text="{x:Bind ViewModel.Journal.Name}" FontSize="18" FontWeight="SemiBold" />
-            <TextBlock Text="{x:Bind ViewModel.Journal.Path}" FontSize="14" />
+            <TextBlock Text="{x:Bind ViewModel.Journal.Name}" FontSize="26" FontWeight="SemiBold" />
+            <TextBlock Text="{x:Bind ViewModel.Journal.Path}" FontSize="18" />
         </StackPanel>
 
         <StackPanel 
@@ -61,23 +61,21 @@
             VerticalAlignment="Center">
             <TextBlock 
                 Text="Tags" 
-                FontSize="18" 
-                FontWeight="SemiBold"
+                FontSize="26" 
                 Margin="0 0 20 00"
-                VerticalAlignment="Center"/>
+                VerticalAlignment="Center" />
             <ComboBox
                 x:Name="TagsComboBox"
                 ItemsSource="{x:Bind ViewModel.Tags}"
                 SelectionChanged="TagsComboBoxSelectionChanged" 
-                VerticalAlignment="Center"/>
+                VerticalAlignment="Center" />
         </StackPanel>
 
         <TextBlock 
             Text="Journal Entries" 
             Grid.Row="3"
             Grid.Column="0"
-            FontSize="18"
-            FontWeight="SemiBold"/>
+            FontSize="26" />
         <ListView
             Grid.Row="4"
             Grid.Column="0"
@@ -90,10 +88,13 @@
             ScrollViewer.VerticalScrollMode="Auto">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="mdj:JournalEntry">
-                    <Grid Padding="0 6 0 6">
+                    <Grid 
+                        Padding="0 6 0 6">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <!--<RowDefinition Height="Auto" />-->
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -103,31 +104,39 @@
                         <Image 
                             Grid.Column="0" 
                             Grid.Row="0"
-                            Grid.RowSpan="2"
+                            Grid.RowSpan="3"
                             Source="Assets/journalentry.png" 
                             Height="38" 
-                            VerticalAlignment="Center" 
-                            Margin="0 0 10 0" />
+                            VerticalAlignment="Top" 
+                            Margin="0 5 10 0" />
                         <TextBlock 
                             Grid.Column="1" 
                             Grid.Row="0"
                             Text="{x:Bind Title}" 
-                            VerticalAlignment="Center"
                             FontSize="18" 
                             FontWeight="SemiBold" />
                         <TextBlock 
                             Grid.Column="2" 
                             Grid.Row="0"
                             Text="{x:Bind DateLocal}" 
-                            VerticalAlignment="Center"
                             HorizontalAlignment="Right"
                             FontSize="18" />
+                        <!--<TextBlock 
+                            Grid.Column="1" 
+                            Grid.Row="1"
+                            Text="{x:Bind Author}" 
+                            FontSize="14" />-->
                         <TextBlock 
                             Grid.Column="1" 
                             Grid.Row="1"
+                            Text="{x:Bind ShortSummary}" 
+                            ToolTipService.ToolTip="{x:Bind Summary}"
+                            FontSize="14" />
+                        <TextBlock 
+                            Grid.Column="1" 
+                            Grid.Row="2"
                             Text="{x:Bind TagsCsv}" 
-                            FontSize="12" 
-                            VerticalAlignment="Center" />
+                            FontSize="12" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
