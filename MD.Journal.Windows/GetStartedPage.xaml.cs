@@ -1,4 +1,3 @@
-// Copyright (c) Microsoft Corporation and Contributors.
 // Licensed under the MIT License.
 
 using MD.Journal.Recents;
@@ -10,14 +9,8 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace MD.Journal.Windows
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class GetStartedPage : Page
     {
         public GetStartedPage()
@@ -33,16 +26,9 @@ namespace MD.Journal.Windows
 
         public GetStartedViewModel ViewModel { get; }
 
-        private void OpenMainWindow(Journals.Journal journal)
+        private void OpenJournal(Journals.Journal journal)
         {
-            var journalPage = new JournalPage();
-            var mainWindow = new MainWindow
-            {
-                Content = journalPage,
-            };
-
-            mainWindow.Activate();
-            journalPage.Navigate(journal);
+            App.Navigate(typeof(JournalPage), journal);
         }
 
         private async void OpenJournalButtonClickAsync(object sender, RoutedEventArgs e)
@@ -51,7 +37,7 @@ namespace MD.Journal.Windows
             if (folder is not null)
             {
                 var journal = await this.ViewModel.OpenJournalAsync(folder.Path);
-                this.OpenMainWindow(journal);
+                this.OpenJournal(journal);
             }
         }
 
@@ -82,7 +68,7 @@ namespace MD.Journal.Windows
                 {
                     folder = await folder.CreateFolderAsync(journalName);
                     var journal = await this.ViewModel.OpenJournalAsync(folder.Path);
-                    this.OpenMainWindow(journal);
+                    this.OpenJournal(journal);
                 }
             }
         }
@@ -122,7 +108,7 @@ namespace MD.Journal.Windows
             if (e.ClickedItem is RecentItem entry)
             {
                 var journal = await this.ViewModel.OpenJournalAsync(entry.Key);
-                this.OpenMainWindow(journal);
+                this.OpenJournal(journal);
             }
         }
     }

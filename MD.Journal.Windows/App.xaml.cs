@@ -1,7 +1,8 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors.
+﻿
 // Licensed under the MIT License.
 
 using Microsoft.UI.Xaml;
+using System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,14 +29,27 @@ namespace MD.Journal.Windows
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            this.window = new GetStartedWindow
+            this.window = new MainWindow
             {
-                Title = "MD.Journal"
+                Title = "MD.Journal",
+                Content = NavigationPage,
             };
 
+            Navigate(typeof(GetStartedPage));
             this.window.Activate();
         }
 
+        public static void Navigate(Type pageType)
+        {
+            NavigationPage.Navigate(pageType);
+        }
+
+        public static void Navigate(Type pageType, object parameter)
+        {
+            NavigationPage.Navigate(pageType, parameter);
+        }
+
+        private static readonly NavigationPage NavigationPage = new();
         private Window? window;
     }
 }

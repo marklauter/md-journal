@@ -4,14 +4,13 @@ using MD.Journal.Storage;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 
 namespace MD.Journal.Windows.ViewModels
 {
     public sealed class JournalViewModel
         : INotifyPropertyChanged
     {
-        private const string ClearTag = "[clear]";
-
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public Journals.Journal Journal { get; private set; }
@@ -27,7 +26,7 @@ namespace MD.Journal.Windows.ViewModels
                 if (this.currentJournalEntry != value)
                 {
                     this.currentJournalEntry = value;
-                    this.CurrentJournalEntryMarkdown = value.ToMarkdownString();
+                    this.CurrentJournalEntryMarkdown = value?.ToMarkdownString();
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CurrentJournalEntry)));
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CurrentJournalEntryMarkdown)));
                 }
@@ -36,19 +35,23 @@ namespace MD.Journal.Windows.ViewModels
 
         public ObservableCollection<JournalEntry> JournalEntries { get; } = new();
         public ObservableCollection<string> Tags { get; } = new();
+        public ObservableCollection<string> SearchText { get; } = new();
 
         public JournalViewModel(Journals.Journal journal)
         {
             this.Journal = journal ?? throw new ArgumentNullException(nameof(journal));
 
-            //this.WriteEntryAsync();
             this.FillJournalEntriesAsync();
             this.FillTagsAsync();
         }
 
         private async void FillJournalEntriesAsync()
         {
-            var entries = await this.Journal.ReadAsync(new Pagination(0, Int32.MaxValue));
+            this.CurrentJournalEntry = null;
+
+            var entries = (await this.Journal.ReadAsync(Pagination.Default))
+                .Where(entry => entry is not null)
+                .OrderByDescending(entry => entry?.Date);
 
             this.JournalEntries.Clear();
             foreach (var entry in entries)
@@ -58,6 +61,22 @@ namespace MD.Journal.Windows.ViewModels
                     this.JournalEntries.Add(entry);
                 }
             }
+
+            var searchText = entries
+                .SelectMany(entry => entry is null ? Array.Empty<string>() : entry.Title.Split(" "))
+                .Union(entries.SelectMany(entry => entry is null ? Array.Empty<string>() : entry.Tags))
+                .Union(entries.Select(entry => entry is null ? String.Empty : entry.Author))
+                .Where(entry => !String.IsNullOrWhiteSpace(entry))
+                .Distinct();
+
+            this.SearchText.Clear();
+            foreach (var entry in searchText)
+            {
+                if (entry is not null)
+                {
+                    this.SearchText.Add(entry);
+                }
+            }
         }
 
         private async void FillTagsAsync()
@@ -65,7 +84,7 @@ namespace MD.Journal.Windows.ViewModels
             var tags = await this.Journal.ReadTagsAsync();
 
             this.Tags.Clear();
-            this.Tags.Add(ClearTag);
+            this.Tags.Add(String.Empty);
             foreach (var tag in tags)
             {
                 this.Tags.Add(tag);
@@ -80,14 +99,18 @@ namespace MD.Journal.Windows.ViewModels
 
         public async void SearchAsync(string tag)
         {
-            if (tag.Equals(ClearTag, StringComparison.OrdinalIgnoreCase) || String.IsNullOrWhiteSpace(tag))
+            if (String.IsNullOrEmpty(tag))
             {
                 this.FillJournalEntriesAsync();
                 return;
             }
 
-            var entries = await this.Journal
-                .FindAsync(tag, new Pagination(0, Int32.MaxValue));
+            this.CurrentJournalEntry = null;
+
+            var entries = (await this.Journal
+                .FindAsync(tag, Pagination.Default))
+                .Where(entry => entry is not null)
+                .OrderByDescending(entry => entry?.Date);
 
             this.JournalEntries.Clear();
             foreach (var entry in entries)
@@ -98,34 +121,5 @@ namespace MD.Journal.Windows.ViewModels
                 }
             }
         }
-
-        //private async void WriteEntryAsync()
-        //{
-        //    var lines = new string[]
-        //    {
-        //        "## heading 2",
-        //        "line 1",
-        //        "line 2",
-        //        String.Empty,
-        //        "line 3",
-        //        "- bullet 1",
-        //        "- bullet 2",
-        //        String.Empty,
-        //        "line 1",
-        //        "line 2",
-        //        String.Empty,
-        //        "line 3",
-        //    };
-
-        //    var entry = JournalEntryBuilder.Create()
-        //        .WithTitle("title")
-        //        .WithAuthor("author")
-        //        .WithSummary("summary")
-        //        .WithBody(String.Join(Environment.NewLine, lines))
-        //        .WithTags(new string[] { "tag1", "tag2" })
-        //        .Build();
-
-        //    await this.Journal.WriteAsync(entry);
-        //}
     }
 }

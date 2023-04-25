@@ -1,13 +1,16 @@
 <!-- Licensed under the MIT License. -->
 
-<Window
-    x:Class="MD.Journal.Windows.MainWindow"
+<Page
+    x:Class="MD.Journal.Windows.NavigationPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:MD.Journal.Windows"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="MD Journal">
-    <Frame x:Name="ContentFrame"></Frame>
-</Window>
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Frame x:Name="ContentFrame">
+
+    </Frame>
+</Page>

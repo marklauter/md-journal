@@ -14,8 +14,8 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <None Remove="GetStartedPage.xaml" />
-	  <None Remove="GetStartedWindow.xaml" />
 	  <None Remove="JournalPage.xaml" />
+	  <None Remove="NavigationPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -51,17 +51,17 @@
 		<ProjectReference Include="..\MD.Journal\MD.Journal.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Page Update="NavigationPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
 	  <Page Update="GetStartedPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="JournalPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="GetStartedWindow.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>

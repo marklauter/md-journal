@@ -1,9 +1,9 @@
-// Copyright (c) Microsoft Corporation and Contributors.
 // Licensed under the MIT License.
 
 using MD.Journal.Journals;
 using MD.Journal.Windows.ViewModels;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System.ComponentModel;
 using System.Linq;
 
@@ -24,10 +24,18 @@ namespace MD.Journal.Windows
             this.InitializeComponent();
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (e.Parameter is Journals.Journal journal)
+            {
+                this.OpenJournal(journal);
+            }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
         public JournalViewModel? ViewModel { get; private set; }
 
-        public void Navigate(Journals.Journal journal)
+        public void OpenJournal(Journals.Journal journal)
         {
             this.ViewModel = new JournalViewModel(journal);
             PropertyChanged?.Invoke(
@@ -44,7 +52,12 @@ namespace MD.Journal.Windows
             }
         }
 
-        private void TagsGridViewSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void MDJournalLogoTapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            App.Navigate(typeof(GetStartedPage));
+        }
+
+        private void TagsComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var item = e.AddedItems.FirstOrDefault();
             if (this.ViewModel is not null && item is not null and string tag)

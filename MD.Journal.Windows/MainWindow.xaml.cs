@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation and Contributors.
+
 // Licensed under the MIT License.
 
 using Microsoft.UI.Xaml;
@@ -16,6 +16,8 @@ namespace MD.Journal.Windows
         public MainWindow()
         {
             this.InitializeComponent();
+            this.Resize(1200, 900);
+            this.Center();
         }
     }
 }
