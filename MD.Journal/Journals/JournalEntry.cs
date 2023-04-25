@@ -58,6 +58,12 @@ namespace MD.Journal.Journals
         public string[] Paragraphs { get; }
 
         [JsonIgnore]
+        public string DateLocal => this.Date.ToLocalTime().ToShortDateString();
+
+        [JsonIgnore]
+        public string TagsCsv => String.Join(", ", this.Tags);
+
+        [JsonIgnore]
         public string ByLine => $"by {this.Author} {this.Date.ToLocalTime().ToShortDateString()}";
     }
 }
