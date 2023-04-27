@@ -1,15 +1,15 @@
 ﻿using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 
-namespace MD.Journal.Storage
+namespace MD.Journal.IO.Internal
 {
-    public sealed class MemoryStore
-        : Store
+    internal sealed class MemoryResourceStore
+        : ResourceStore
     {
         // first string is filename, second string is the content
         private static readonly ConcurrentDictionary<string, IEnumerable<string>> StoredItems = new();
 
-        public MemoryStore(string path, string resourceName)
+        public MemoryResourceStore(string path, string resourceName)
             : base(path, resourceName)
         {
         }

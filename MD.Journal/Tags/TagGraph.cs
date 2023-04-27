@@ -1,15 +1,16 @@
 ﻿using MD.Journal.Journals;
-using MD.Journal.Storage;
+using MD.Journal.IO;
 using System.Runtime.CompilerServices;
+using MD.Journal.ResourceStorage;
 
 namespace MD.Journal.Tags
 {
     internal sealed class TagGraph
     {
-        private readonly IStoreSet stores;
-        private readonly IStore tagStore;
+        private readonly IResourceStoreGroup stores;
+        private readonly IDocument tagStore;
 
-        public TagGraph(IStoreSet stores)
+        public TagGraph(IResourceStoreGroup stores)
         {
             this.stores = stores ?? throw new ArgumentNullException(nameof(stores));
             this.tagStore = this.stores["tags.txt"];

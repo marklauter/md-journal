@@ -1,4 +1,4 @@
-﻿using MD.Journal.Storage;
+﻿using MD.Journal.IO;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -8,9 +8,9 @@ namespace MD.Journal.Indexes
         : IIndex<TValue>
         where TValue : IComparable<TValue>
     {
-        private readonly IStore store;
+        private readonly IDocument store;
 
-        public Index(IStore store)
+        public Index(IDocument store)
         {
             this.store = store;
         }

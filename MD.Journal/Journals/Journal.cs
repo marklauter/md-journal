@@ -1,34 +1,36 @@
-﻿using MD.Journal.Indexes;
+﻿using MD.Journal.IO;
+using MD.Journal.Indexes;
 using MD.Journal.Markdown;
 using MD.Journal.Recents;
-using MD.Journal.Storage;
+using MD.Journal.ResourceStorage;
 using MD.Journal.Tags;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using MD.Journal.IO.Internal;
 
 namespace MD.Journal.Journals
 {
     public sealed class Journal
     {
         public static Journal Open<TStore>(string path)
-            where TStore : Store
+            where TStore : ResourceStore
         {
-            return new Journal(path, new StoreSet<TStore>(path));
+            return new Journal(path, new ResourceStoreGroup<TStore>(path));
         }
 
-        private readonly IStoreSet stores;
+        private readonly IResourceStoreGroup stores;
         private readonly IRecentItems recentAuthors;
         private readonly IIndex<DateTime> journalByDateIndex;
         private readonly IIndex<string> journalByAuthorIndex;
-        private readonly IStore tableOfContents;
+        private readonly IDocument tableOfContents;
         private readonly TagGraph tagGraph;
 
         public string Path { get; }
         public string Name { get; }
 
-        private Journal(string path, IStoreSet stores)
+        private Journal(string path, IResourceStoreGroup stores)
         {
             if (String.IsNullOrWhiteSpace(path))
             {

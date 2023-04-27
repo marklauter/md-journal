@@ -1,14 +1,14 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace MD.Journal.Storage
+namespace MD.Journal.IO.Internal
 {
-    public sealed class StoreSet<T>
-        : IStoreSet
-        where T : Store
+    internal sealed class ResourceStoreGroup<T>
+        : IResourceStoreGroup
+        where T : ResourceStore
     {
-        private readonly Dictionary<string, IStore> stores = new();
+        private readonly Dictionary<string, IDocument> stores = new();
 
-        public StoreSet(string path)
+        public ResourceStoreGroup(string path)
         {
             if (String.IsNullOrWhiteSpace(path))
             {
@@ -18,11 +18,11 @@ namespace MD.Journal.Storage
             this.Path = path;
         }
 
-        public IStore this[string name] => this.GetStore(name);
+        public IDocument this[string name] => this.GetStore(name);
 
         public string Path { get; }
 
-        public IEnumerable<IStore> Stores => this.stores.Values;
+        public IEnumerable<IDocument> Stores => this.stores.Values;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(string name)
@@ -30,7 +30,7 @@ namespace MD.Journal.Storage
             return this.stores.ContainsKey(name);
         }
 
-        private IStore GetStore(string name)
+        private IDocument GetStore(string name)
         {
             if (name is null)
             {
@@ -39,10 +39,8 @@ namespace MD.Journal.Storage
 
             if (!this.stores.TryGetValue(name, out var store))
             {
-                store = Activator.CreateInstance(typeof(T), this.Path, name) as IStore;
-#pragma warning disable CS8604 // Possible null reference argument.
+                store = Activator.CreateInstance(typeof(T), this.Path, name) as IDocument;
                 this.stores.Add(name, store);
-#pragma warning restore CS8604 // Possible null reference argument.
             }
 
             return store;

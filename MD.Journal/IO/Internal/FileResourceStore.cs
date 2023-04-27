@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
-namespace MD.Journal.Storage
+namespace MD.Journal.IO.Internal
 {
-    public sealed class FileStore
-        : Store
+    internal sealed class FileResourceStore
+        : ResourceStore
     {
-        public FileStore(string path, string resourceName)
+        public FileResourceStore(string path, string resourceName)
             : base(path, resourceName)
         {
             _ = Directory.CreateDirectory(this.Path);

@@ -1,4 +1,4 @@
-﻿using MD.Journal.Storage;
+﻿using MD.Journal.IO;
 
 namespace MD.Journal.Indexes
 {

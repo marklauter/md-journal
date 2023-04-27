@@ -1,4 +1,4 @@
-﻿using MD.Journal.Storage;
+﻿using MD.Journal.IO;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -8,11 +8,11 @@ namespace MD.Journal.Recents
     public class RecentItems
         : IRecentItems
     {
-        private readonly IStore store;
+        private readonly IDocument store;
         private readonly int entryLimit;
 
         public RecentItems(
-            IStore store,
+            IDocument store,
             IOptions<RecentItemsOptions> options)
         {
             if (options is null)
