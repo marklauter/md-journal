@@ -1,9 +1,9 @@
 ﻿using MD.Journal.Recents;
-using MD.Journal.Storage;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using MD.Journal.ResourceStorage;
 
 namespace MD.Journal.Windows.ViewModels
 {
@@ -11,7 +11,7 @@ namespace MD.Journal.Windows.ViewModels
     {
         public ObservableCollection<RecentItem> RecentJournals { get; } = new();
 
-        private readonly IStoreSet stores;
+        private readonly IResourceStoreGroup stores;
         private readonly IRecentItems recentJournals;
 
         public GetStartedViewModel(string path)
@@ -21,7 +21,7 @@ namespace MD.Journal.Windows.ViewModels
                 throw new ArgumentException($"'{nameof(path)}' cannot be null or whitespace.", nameof(path));
             }
 
-            this.stores = new StoreSet<FileStore>(path);
+            this.stores = new StoreSet<FileResourceStore>(path);
             this.recentJournals = new RecentItems(this.stores["recent-journals.json"], Options.Create(new RecentItemsOptions()));
 
             _ = this.FillRecentRepositoriesAsync();
@@ -39,7 +39,7 @@ namespace MD.Journal.Windows.ViewModels
 
         public async Task<Journals.Journal> OpenJournalAsync(string path)
         {
-            var journal = Journals.Journal.Open<FileStore>(path);
+            var journal = Journals.Journal.Open<FileResourceStore>(path);
             await this.recentJournals.TouchAsync(new RecentItem(journal.Path, DateTime.UtcNow));
             await this.FillRecentRepositoriesAsync();
             return journal;

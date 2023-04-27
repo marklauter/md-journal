@@ -1,6 +1,6 @@
 ﻿using MD.Journal.Journals;
 using MD.Journal.Markdown;
-using MD.Journal.Storage;
+using MD.Journal.IO;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
