@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -12,8 +13,9 @@ namespace MD.Journal.IO.Readers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public MemoryResourceReader(
             IResourceStore resourceStore,
-            IOptions<ResourceReaderOptions> options)
-            : base(options)
+            IOptions<ResourceReaderOptions> options,
+            ILogger<MemoryResourceReader> logger)
+            : base(options, logger)
         {
             this.resourceStore = resourceStore;
         }
@@ -28,6 +30,8 @@ namespace MD.Journal.IO.Readers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override Task<IEnumerable<string>> ReadAllLinesAsync(ResourceUri uri)
         {
+            this.Logger.LogInformation("{MethodName}({Uri})", nameof(ReadAllLinesAsync), (string)uri);
+
             return Task.FromResult(!this.Exists(uri)
                 ? Enumerable.Empty<string>()
                 : !this.resourceStore.Resources.TryGetValue(uri, out var lines)
@@ -39,12 +43,16 @@ namespace MD.Journal.IO.Readers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override Task<ReadLinesResponse> ReadLinesAsync(ResourceUri uri)
         {
+            this.Logger.LogInformation("{MethodName}({Uri})", nameof(ReadLinesAsync), (string)uri);
+
             return this.ReadLinesAsync(PaginationToken.Bof(uri));
         }
 
         [Pure]
         public override Task<ReadLinesResponse> ReadLinesAsync(PaginationToken paginationToken)
         {
+            this.Logger.LogInformation("{MethodName}({@PaginationToken})", nameof(ReadLinesAsync), paginationToken);
+
             var uri = paginationToken.Uri;
             if (!this.Exists(uri))
             {
@@ -88,6 +96,8 @@ namespace MD.Journal.IO.Readers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override Task<string> ReadTextAsync(ResourceUri uri)
         {
+            this.Logger.LogInformation("{MethodName}({Uri})", nameof(ReadTextAsync), (string)uri);
+
             return !this.Exists(uri)
                 ? Task.FromResult(String.Empty)
                 : !this.resourceStore.Resources.TryGetValue(uri, out var lines)
@@ -99,7 +109,11 @@ namespace MD.Journal.IO.Readers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override async Task<string> ReadTextAsync(ResourceUri uri, int offset, int length)
         {
-            return (await this.ReadTextAsync(uri))[offset..(offset + length)];
+            this.Logger.LogInformation("{MethodName}({Uri}, {Offset}, {Length})", nameof(ReadTextAsync), (string)uri, offset, length);
+
+            return !this.Exists(uri)
+                ? String.Empty
+                : (await this.ReadTextAsync(uri))[offset..(offset + length)];
         }
     }
 }

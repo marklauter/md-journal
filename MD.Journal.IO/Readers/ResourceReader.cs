@@ -1,11 +1,14 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace MD.Journal.IO.Readers
 {
     internal abstract class ResourceReader
         : IResourceReader
     {
-        protected ResourceReader(IOptions<ResourceReaderOptions> options)
+        protected ResourceReader(
+            IOptions<ResourceReaderOptions> options,
+            ILogger<ResourceReader> logger)
         {
             if (options is null)
             {
@@ -13,9 +16,11 @@ namespace MD.Journal.IO.Readers
             }
 
             this.PageSize = options.Value.PageSize;
+            this.Logger = logger;
         }
 
         public int PageSize { get; }
+        public ILogger<ResourceReader> Logger { get; }
 
         public abstract Task<IEnumerable<string>> ReadAllLinesAsync(ResourceUri uri);
         public abstract Task<ReadLinesResponse> ReadLinesAsync(ResourceUri uri);
