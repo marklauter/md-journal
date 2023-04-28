@@ -19,7 +19,7 @@ namespace MD.Journal.IO.Readers
 
         public abstract Task<IEnumerable<string>> ReadAllLinesAsync(ResourceUri uri);
         public abstract Task<ReadLinesResponse> ReadLinesAsync(ResourceUri uri);
-        public abstract Task<ReadLinesResponse> ReadNextLinesAsync(PaginationToken paginationToken);
+        public abstract Task<ReadLinesResponse> ReadLinesAsync(PaginationToken paginationToken);
         public abstract Task<string> ReadTextAsync(ResourceUri uri);
         public abstract Task<string> ReadTextAsync(ResourceUri uri, int offset, int length);
     }

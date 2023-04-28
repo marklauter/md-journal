@@ -26,17 +26,17 @@ namespace MD.Journal.IO.Readers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override Task<ReadLinesResponse> ReadLinesAsync(ResourceUri uri)
         {
-            return this.ReadNextLinesAsync(PaginationToken.Bof(uri));
+            return this.ReadLinesAsync(PaginationToken.Bof(uri));
         }
 
         [Pure]
-        public override async Task<ReadLinesResponse> ReadNextLinesAsync(PaginationToken paginationToken)
+        public override async Task<ReadLinesResponse> ReadLinesAsync(PaginationToken paginationToken)
         {
             var uri = paginationToken.Uri;
             if (!File.Exists(uri))
             {
                 return new ReadLinesResponse(
-                    Enumerable.Empty<string>(),
+                    Array.Empty<string>(),
                     PaginationToken.Eof(uri));
             }
 
@@ -50,12 +50,12 @@ namespace MD.Journal.IO.Readers
             while (!reader.EndOfStream)
             {
                 var line = await reader.ReadLineAsync();
-                if (linenumber >= start && line is not null)
+                if (linenumber + start >= start && line is not null)
                 {
                     lines[linenumber] = line;
                 }
 
-                if (++linenumber == end)
+                if (++linenumber + start == end)
                 {
                     return new ReadLinesResponse(
                         lines,

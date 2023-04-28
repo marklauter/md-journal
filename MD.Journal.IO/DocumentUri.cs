@@ -51,10 +51,6 @@ namespace MD.Journal.IO
 
         private readonly string value;
 
-        public string? Path => System.IO.Path.GetDirectoryName(this.value);
-
-        public string ResourceName => System.IO.Path.GetFileName(this.value);
-
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string ToString()
