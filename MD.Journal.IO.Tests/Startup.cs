@@ -11,6 +11,7 @@ namespace MD.Journal.IO.Tests
         public void ConfigureServices(IServiceCollection services)
         {
             services
+                .AddLogging()
                 .AddResourceStore()
                 .TryAddTransient(serviceProvider => Options.Create(new ResourceReaderOptions { PageSize = 5 }));
         }

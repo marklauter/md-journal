@@ -1,19 +1,26 @@
 using MD.Journal.IO.Readers;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace MD.Journal.IO.Tests
+namespace MD.Journal.IO.Tests.Readers
 {
-    public class MemoryResourceReaderTests
+    public sealed class MemoryResourceReaderTests
     {
         private readonly IResourceStore resourceStore;
         private readonly IOptions<ResourceReaderOptions> options;
+        private readonly ILogger<MemoryResourceReader> logger;
 
-        public MemoryResourceReaderTests(
-            IResourceStore resourceStore,
-            IOptions<ResourceReaderOptions> options)
+        public MemoryResourceReaderTests(IServiceProvider serviceProvider)
         {
-            this.resourceStore = resourceStore ?? throw new ArgumentNullException(nameof(resourceStore));
-            this.options = options ?? throw new ArgumentNullException(nameof(options));
+            if (serviceProvider is null)
+            {
+                throw new ArgumentNullException(nameof(serviceProvider));
+            }
+
+            this.resourceStore = serviceProvider.GetRequiredService<IResourceStore>();
+            this.options = serviceProvider.GetRequiredService<IOptions<ResourceReaderOptions>>();
+            this.logger = serviceProvider.GetRequiredService<ILogger<MemoryResourceReader>>();
         }
 
         private IEnumerable<string> AddResource(ResourceUri uri, int count)
@@ -35,10 +42,13 @@ namespace MD.Journal.IO.Tests
         [InlineData(20)]
         public async Task ReadAllLinesAsync_Returns_All_Lines(int count)
         {
-            var uri = (ResourceUri)$"{nameof(ReadAllLinesAsync_Returns_All_Lines)}-{count}";
+            var uri = (ResourceUri)Guid.NewGuid().ToString();
             var expectedLines = this.AddResource(uri, count);
 
-            var reader = new MemoryResourceReader(this.resourceStore, this.options);
+            var reader = new MemoryResourceReader(
+                this.resourceStore,
+                this.options,
+                this.logger);
 
             var actualLines = await reader.ReadAllLinesAsync(uri);
 
@@ -54,10 +64,13 @@ namespace MD.Journal.IO.Tests
         [InlineData(20)]
         public async Task ReadLinesAsync_Returns_Correct_Lines(int count)
         {
-            var uri = (ResourceUri)$"{nameof(ReadLinesAsync_Returns_Correct_Lines)}-{count}";
+            var uri = (ResourceUri)Guid.NewGuid().ToString();
             var expectedLines = this.AddResource(uri, count).ToArray();
 
-            var reader = new MemoryResourceReader(this.resourceStore, this.options);
+            var reader = new MemoryResourceReader(
+                this.resourceStore,
+                this.options,
+                this.logger);
 
             var actualResponse = await reader.ReadLinesAsync(uri);
 
@@ -76,10 +89,14 @@ namespace MD.Journal.IO.Tests
         [InlineData(20)]
         public async Task ReadLinesAsync_Returns_PaginationToken_With_Correct_Eof_Value(int count)
         {
-            var uri = (ResourceUri)$"{nameof(ReadLinesAsync_Returns_PaginationToken_With_Correct_Eof_Value)}-{count}";
-            var expectedLines = this.AddResource(uri, count).ToArray();
+            var uri = (ResourceUri)Guid.NewGuid().ToString();
 
-            var reader = new MemoryResourceReader(this.resourceStore, this.options);
+            _ = this.AddResource(uri, count).ToArray();
+
+            var reader = new MemoryResourceReader(
+                this.resourceStore,
+                this.options,
+                this.logger);
 
             var actualResponse = await reader.ReadLinesAsync(uri);
 
@@ -98,10 +115,14 @@ namespace MD.Journal.IO.Tests
         [InlineData(20)]
         public async Task ReadNextLinesAsync_Returns_Correct_Array_Length(int count)
         {
-            var uri = (ResourceUri)$"{nameof(ReadNextLinesAsync_Returns_Correct_Array_Length)}-{count}";
-            var expectedLines = this.AddResource(uri, count).ToArray();
+            var uri = (ResourceUri)Guid.NewGuid().ToString();
 
-            var reader = new MemoryResourceReader(this.resourceStore, this.options);
+            _ = this.AddResource(uri, count).ToArray();
+
+            var reader = new MemoryResourceReader(
+                this.resourceStore,
+                this.options,
+                this.logger);
 
             var actualResponse = await reader.ReadLinesAsync(uri);
             actualResponse = await reader.ReadLinesAsync(actualResponse.PaginationToken);

@@ -35,5 +35,10 @@
 			<_Parameter1>$(MSBuildProjectName).Benchmarks</_Parameter1>
 		</AssemblyAttribute>
 	</ItemGroup>
-	
+
+	<ItemGroup>
+		<Folder Include="Indexes\" />
+		<Folder Include="Repositories\" />
+	</ItemGroup>
+
 </Project>

@@ -1,16 +1,24 @@
 ﻿using MD.Journal.IO.Readers;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace MD.Journal.IO.Tests
+namespace MD.Journal.IO.Tests.Readers
 {
-    public class FileResourceReaderTests
+    public sealed class FileResourceReaderTests
     {
         private readonly IOptions<ResourceReaderOptions> options;
+        private readonly ILogger<FileResourceReader> logger;
 
-        public FileResourceReaderTests(
-            IOptions<ResourceReaderOptions> options)
+        public FileResourceReaderTests(IServiceProvider serviceProvider)
         {
-            this.options = options ?? throw new ArgumentNullException(nameof(options));
+            if (serviceProvider is null)
+            {
+                throw new ArgumentNullException(nameof(serviceProvider));
+            }
+
+            this.options = serviceProvider.GetRequiredService<IOptions<ResourceReaderOptions>>();
+            this.logger = serviceProvider.GetRequiredService<ILogger<FileResourceReader>>();
         }
 
         private static async Task<string[]> AddResourceAsync(ResourceUri uri, int count)
@@ -32,10 +40,10 @@ namespace MD.Journal.IO.Tests
         [InlineData(20)]
         public async Task ReadAllLinesAsync_Returns_All_Lines(int count)
         {
-            var uri = (ResourceUri)$"{nameof(ReadAllLinesAsync_Returns_All_Lines)}-{count}";
+            var uri = (ResourceUri)Guid.NewGuid().ToString();
             var expectedLines = await AddResourceAsync(uri, count);
 
-            var reader = new FileResourceReader(this.options);
+            var reader = new FileResourceReader(this.options, this.logger);
 
             var actualLines = await reader.ReadAllLinesAsync(uri);
 
@@ -51,10 +59,10 @@ namespace MD.Journal.IO.Tests
         [InlineData(20)]
         public async Task ReadLinesAsync_Returns_Correct_Lines(int count)
         {
-            var uri = (ResourceUri)$"{nameof(ReadLinesAsync_Returns_Correct_Lines)}-{count}";
+            var uri = (ResourceUri)Guid.NewGuid().ToString();
             var expectedLines = await AddResourceAsync(uri, count);
 
-            var reader = new FileResourceReader(this.options);
+            var reader = new FileResourceReader(this.options, this.logger);
 
             var actualResponse = await reader.ReadLinesAsync(uri);
 
@@ -73,10 +81,11 @@ namespace MD.Journal.IO.Tests
         [InlineData(20)]
         public async Task ReadLinesAsync_Returns_PaginationToken_With_Correct_Eof_Value(int count)
         {
-            var uri = (ResourceUri)$"{nameof(ReadLinesAsync_Returns_PaginationToken_With_Correct_Eof_Value)}-{count}";
-            var expectedLines = await AddResourceAsync(uri, count);
+            var uri = (ResourceUri)Guid.NewGuid().ToString();
 
-            var reader = new FileResourceReader(this.options);
+            _ = await AddResourceAsync(uri, count);
+
+            var reader = new FileResourceReader(this.options, this.logger);
 
             var actualResponse = await reader.ReadLinesAsync(uri);
 
@@ -95,10 +104,11 @@ namespace MD.Journal.IO.Tests
         [InlineData(20)]
         public async Task ReadNextLinesAsync_Returns_Correct_Array_Length(int count)
         {
-            var uri = (ResourceUri)$"{nameof(ReadNextLinesAsync_Returns_Correct_Array_Length)}-{count}";
-            var expectedLines = await AddResourceAsync(uri, count);
+            var uri = (ResourceUri)Guid.NewGuid().ToString();
 
-            var reader = new FileResourceReader(this.options);
+            _ = await AddResourceAsync(uri, count);
+
+            var reader = new FileResourceReader(this.options, this.logger);
 
             var actualResponse = await reader.ReadLinesAsync(uri);
             actualResponse = await reader.ReadLinesAsync(actualResponse.PaginationToken);
