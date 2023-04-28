@@ -8,11 +8,11 @@ namespace MD.Journal.Recents
     public class RecentItems
         : IRecentItems
     {
-        private readonly IDocument store;
+        private readonly IResource store;
         private readonly int entryLimit;
 
         public RecentItems(
-            IDocument store,
+            IResource store,
             IOptions<RecentItemsOptions> options)
         {
             if (options is null)

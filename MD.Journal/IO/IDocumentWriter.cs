@@ -1,8 +1,8 @@
 ﻿namespace MD.Journal.IO
 {
-    public interface IDocumentWriter
+    public interface IResourceWriter
     {
-        DocumentUri Uri { get; }
+        ResourceUri Uri { get; }
 
         Task AppendLineAsync(string value);
         Task AppendTextAsync(string value);

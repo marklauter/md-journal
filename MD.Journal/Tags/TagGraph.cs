@@ -8,7 +8,7 @@ namespace MD.Journal.Tags
     internal sealed class TagGraph
     {
         private readonly IResourceStoreGroup stores;
-        private readonly IDocument tagStore;
+        private readonly IResource tagStore;
 
         public TagGraph(IResourceStoreGroup stores)
         {

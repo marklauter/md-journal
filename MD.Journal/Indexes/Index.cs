@@ -8,9 +8,9 @@ namespace MD.Journal.Indexes
         : IIndex<TValue>
         where TValue : IComparable<TValue>
     {
-        private readonly IDocument store;
+        private readonly IResource store;
 
-        public Index(IDocument store)
+        public Index(IResource store)
         {
             this.store = store;
         }

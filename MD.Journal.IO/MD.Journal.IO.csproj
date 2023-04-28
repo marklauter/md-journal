@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 
-		<PackageId>MD.Journal</PackageId>
+		<PackageId>MD.Journal.IO</PackageId>
 		<Authors>Mark Lauter</Authors>
 		<RepositoryUrl>https://github.com/marklauter/md-journal</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/marklauter/md-journal</PackageProjectUrl>
@@ -18,7 +18,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Grynwald.MarkdownGenerator" Version="3.0.106" />
 		<PackageReference Include="IDisposableAnalyzers" Version="4.0.6">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -36,5 +35,5 @@
 			<_Parameter1>$(MSBuildProjectName).Benchmarks</_Parameter1>
 		</AssemblyAttribute>
 	</ItemGroup>
-
+	
 </Project>

@@ -9,13 +9,14 @@ using Newtonsoft.Json;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using MD.Journal.IO.Internal;
+using MD.Journal.IO.Readers;
 
 namespace MD.Journal.Journals
 {
     public sealed class Journal
     {
         public static Journal Open<TStore>(string path)
-            where TStore : ResourceStore
+            where TStore : MemoryResourceStore
         {
             return new Journal(path, new ResourceStoreGroup<TStore>(path));
         }
@@ -24,7 +25,7 @@ namespace MD.Journal.Journals
         private readonly IRecentItems recentAuthors;
         private readonly IIndex<DateTime> journalByDateIndex;
         private readonly IIndex<string> journalByAuthorIndex;
-        private readonly IDocument tableOfContents;
+        private readonly IResource tableOfContents;
         private readonly TagGraph tagGraph;
 
         public string Path { get; }

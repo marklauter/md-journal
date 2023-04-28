@@ -7,7 +7,7 @@ namespace MD.Journal.Markdown
 {
     public static class JournalEntryMarkdownExtensions
     {
-        public static MdDocument ToMarkdownDocument(this JournalEntry entry)
+        public static MdResource ToMarkdownResource(this JournalEntry entry)
         {
             if (String.IsNullOrEmpty(entry.Id))
             {
@@ -55,7 +55,7 @@ namespace MD.Journal.Markdown
                 body.Add(new MdParagraph(new MdRawMarkdownSpan(entry.Paragraphs[i])));
             }
 
-            return new MdDocument(header, body);
+            return new MdResource(header, body);
         }
 
         [Pure]
@@ -63,7 +63,7 @@ namespace MD.Journal.Markdown
         public static MemoryStream ToMarkdownStream(this JournalEntry entry)
         {
             var stream = new MemoryStream();
-            entry.ToMarkdownDocument().Save(stream);
+            entry.ToMarkdownResource().Save(stream);
             stream.Position = 0;
 
             return stream;
@@ -73,7 +73,7 @@ namespace MD.Journal.Markdown
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string ToMarkdownString(this JournalEntry entry)
         {
-            return entry.ToMarkdownDocument().ToString();
+            return entry.ToMarkdownResource().ToString();
         }
     }
 }

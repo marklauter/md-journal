@@ -1,89 +1,91 @@
-﻿using MD.Journal.Pagination;
+﻿using Microsoft.Extensions.Options;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
-namespace MD.Journal.IO.Internal
+namespace MD.Journal.IO.Readers
 {
-    internal sealed class FileDocumentReader
-        : DocumentReader
+    internal sealed class FileResourceReader
+        : ResourceReader
     {
-        public FileDocumentReader(DocumentUri uri, int pageSize)
-            : base(uri, pageSize)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public FileResourceReader(IOptions<ResourceReaderOptions> options)
+            : base(options)
         {
         }
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override async Task<IEnumerable<string>> ReadAllLinesAsync()
+        public override async Task<IEnumerable<string>> ReadAllLinesAsync(ResourceUri uri)
         {
-            return !File.Exists(this.Uri)
+            return !File.Exists(uri)
                 ? Enumerable.Empty<string>()
-                : await File.ReadAllLinesAsync(this.Uri);
+                : await File.ReadAllLinesAsync(uri);
         }
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override Task<ReadLinesResponse> ReadLinesAsync()
+        public override Task<ReadLinesResponse> ReadLinesAsync(ResourceUri uri)
         {
-            return this.ReadNextLinesAsync(PaginationToken.Bof);
+            return this.ReadNextLinesAsync(PaginationToken.Bof(uri));
         }
 
         [Pure]
         public override async Task<ReadLinesResponse> ReadNextLinesAsync(PaginationToken paginationToken)
         {
-            if (!File.Exists(this.Uri))
+            var uri = paginationToken.Uri;
+            if (!File.Exists(uri))
             {
                 return new ReadLinesResponse(
                     Enumerable.Empty<string>(),
-                    PaginationToken.Eof);
+                    PaginationToken.Eof(uri));
             }
 
             var linenumber = 0;
             var start = paginationToken.NextPageStart;
             var end = start + this.PageSize;
-            var lines = new List<string>();
+            var lines = new string[this.PageSize];
 
-            using var stream = File.OpenRead(this.Uri);
+            using var stream = File.OpenRead(uri);
             using var reader = new StreamReader(stream);
             while (!reader.EndOfStream)
             {
                 var line = await reader.ReadLineAsync();
                 if (linenumber >= start && line is not null)
                 {
-                    lines.Add(line);
+                    lines[linenumber] = line;
                 }
 
                 if (++linenumber == end)
                 {
                     return new ReadLinesResponse(
                         lines,
-                        new PaginationToken(end));
+                        new PaginationToken(uri, end));
                 }
             }
 
             return new ReadLinesResponse(
-                lines,
-                PaginationToken.Eof);
+                lines[..linenumber],
+                PaginationToken.Eof(uri));
         }
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override Task<string> ReadTextAsync()
+        public override Task<string> ReadTextAsync(ResourceUri uri)
         {
-            return !File.Exists(this.Uri)
+            return !File.Exists(uri)
                 ? Task.FromResult(String.Empty)
-                : File.ReadAllTextAsync(this.Uri);
+                : File.ReadAllTextAsync(uri);
         }
 
         [Pure]
-        public override async Task<string> ReadTextAsync(int offset, int length)
+        public override async Task<string> ReadTextAsync(ResourceUri uri, int offset, int length)
         {
-            if (!File.Exists(this.Uri))
+            if (!File.Exists(uri))
             {
                 return String.Empty;
             }
 
-            using var stream = File.OpenRead(this.Uri);
+            using var stream = File.OpenRead(uri);
             using var reader = new StreamReader(stream);
             var buffer = new char[length];
             var blockSize = await reader.ReadBlockAsync(buffer, offset, length);
