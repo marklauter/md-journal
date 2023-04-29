@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using MD.Journal.IO.Pagination;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -13,7 +14,7 @@ namespace MD.Journal.IO.Readers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public MemoryResourceReader(
             IResourceStore resourceStore,
-            IOptions<ResourceReaderOptions> options,
+            IOptions<PaginationOptions> options,
             ILogger<MemoryResourceReader> logger)
             : base(options, logger)
         {
@@ -41,7 +42,7 @@ namespace MD.Journal.IO.Readers
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override Task<ReadLinesResponse> ReadLinesAsync(ResourceUri uri)
+        public override Task<ReadResponse> ReadLinesAsync(ResourceUri uri)
         {
             this.Logger.LogInformation("{MethodName}({Uri})", nameof(ReadLinesAsync), (string)uri);
 
@@ -49,21 +50,21 @@ namespace MD.Journal.IO.Readers
         }
 
         [Pure]
-        public override Task<ReadLinesResponse> ReadLinesAsync(PaginationToken paginationToken)
+        public override Task<ReadResponse> ReadLinesAsync(PaginationToken paginationToken)
         {
             this.Logger.LogInformation("{MethodName}({@PaginationToken})", nameof(ReadLinesAsync), paginationToken);
 
             var uri = paginationToken.Uri;
             if (!this.Exists(uri))
             {
-                return Task.FromResult(new ReadLinesResponse(
+                return Task.FromResult(new ReadResponse(
                     Array.Empty<string>(),
                     PaginationToken.Eof(uri)));
             }
 
             if (!this.resourceStore.Resources.TryGetValue(uri, out var resources))
             {
-                return Task.FromResult(new ReadLinesResponse(
+                return Task.FromResult(new ReadResponse(
                     Array.Empty<string>(),
                     PaginationToken.Eof(uri)));
             }
@@ -81,13 +82,13 @@ namespace MD.Journal.IO.Readers
 
                 if (++linenumber + start == end)
                 {
-                    return Task.FromResult(new ReadLinesResponse(
+                    return Task.FromResult(new ReadResponse(
                         lines,
                         new PaginationToken(uri, end)));
                 }
             }
 
-            return Task.FromResult(new ReadLinesResponse(
+            return Task.FromResult(new ReadResponse(
                 lines[..linenumber],
                 PaginationToken.Eof(uri)));
         }

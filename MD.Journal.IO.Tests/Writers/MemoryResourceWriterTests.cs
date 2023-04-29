@@ -1,4 +1,5 @@
-﻿using MD.Journal.IO.Readers;
+﻿using MD.Journal.IO.Pagination;
+using MD.Journal.IO.Readers;
 using MD.Journal.IO.Writers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,7 +18,7 @@ namespace MD.Journal.IO.Tests.Writers
         protected override IResourceReader GetReader()
         {
             var resourceStore = this.ServiceProvider.GetRequiredService<IResourceStore>();
-            var options = this.ServiceProvider.GetRequiredService<IOptions<ResourceReaderOptions>>();
+            var options = this.ServiceProvider.GetRequiredService<IOptions<PaginationOptions>>();
             var logger = this.ServiceProvider.GetRequiredService<ILogger<MemoryResourceReader>>();
 
             return new MemoryResourceReader(resourceStore, options, logger);

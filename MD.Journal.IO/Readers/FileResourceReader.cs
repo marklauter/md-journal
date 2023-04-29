@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using MD.Journal.IO.Pagination;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -10,7 +11,7 @@ namespace MD.Journal.IO.Readers
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FileResourceReader(
-            IOptions<ResourceReaderOptions> options,
+            IOptions<PaginationOptions> options,
             ILogger<FileResourceReader> logger)
             : base(options, logger)
         {
@@ -29,7 +30,7 @@ namespace MD.Journal.IO.Readers
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override Task<ReadLinesResponse> ReadLinesAsync(ResourceUri uri)
+        public override Task<ReadResponse> ReadLinesAsync(ResourceUri uri)
         {
             this.Logger.LogInformation("{MethodName}({Uri})", nameof(ReadLinesAsync), (string)uri);
 
@@ -37,14 +38,14 @@ namespace MD.Journal.IO.Readers
         }
 
         [Pure]
-        public override async Task<ReadLinesResponse> ReadLinesAsync(PaginationToken paginationToken)
+        public override async Task<ReadResponse> ReadLinesAsync(PaginationToken paginationToken)
         {
             this.Logger.LogInformation("{MethodName}({@PaginationToken})", nameof(ReadLinesAsync), paginationToken);
 
             var uri = paginationToken.Uri;
             if (!File.Exists(uri))
             {
-                return new ReadLinesResponse(
+                return new ReadResponse(
                     Array.Empty<string>(),
                     PaginationToken.Eof(uri));
             }
@@ -66,13 +67,13 @@ namespace MD.Journal.IO.Readers
 
                 if (++linenumber + start == end)
                 {
-                    return new ReadLinesResponse(
+                    return new ReadResponse(
                         lines,
                         new PaginationToken(uri, end));
                 }
             }
 
-            return new ReadLinesResponse(
+            return new ReadResponse(
                 lines[..linenumber],
                 PaginationToken.Eof(uri));
         }

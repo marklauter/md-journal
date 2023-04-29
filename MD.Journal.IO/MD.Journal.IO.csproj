@@ -36,9 +36,4 @@
 		</AssemblyAttribute>
 	</ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="Indexes\" />
-		<Folder Include="Repositories\" />
-	</ItemGroup>
-
 </Project>

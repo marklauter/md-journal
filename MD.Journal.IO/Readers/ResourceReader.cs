@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using MD.Journal.IO.Pagination;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace MD.Journal.IO.Readers
@@ -7,7 +8,7 @@ namespace MD.Journal.IO.Readers
         : IResourceReader
     {
         protected ResourceReader(
-            IOptions<ResourceReaderOptions> options,
+            IOptions<PaginationOptions> options,
             ILogger<ResourceReader> logger)
         {
             if (options is null)
@@ -23,8 +24,8 @@ namespace MD.Journal.IO.Readers
         public ILogger<ResourceReader> Logger { get; }
 
         public abstract Task<IEnumerable<string>> ReadAllLinesAsync(ResourceUri uri);
-        public abstract Task<ReadLinesResponse> ReadLinesAsync(ResourceUri uri);
-        public abstract Task<ReadLinesResponse> ReadLinesAsync(PaginationToken paginationToken);
+        public abstract Task<ReadResponse> ReadLinesAsync(ResourceUri uri);
+        public abstract Task<ReadResponse> ReadLinesAsync(PaginationToken paginationToken);
         public abstract Task<string> ReadTextAsync(ResourceUri uri);
         public abstract Task<string> ReadTextAsync(ResourceUri uri, int offset, int length);
     }

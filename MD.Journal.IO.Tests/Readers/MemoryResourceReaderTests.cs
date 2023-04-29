@@ -1,3 +1,4 @@
+using MD.Journal.IO.Pagination;
 using MD.Journal.IO.Readers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -8,7 +9,7 @@ namespace MD.Journal.IO.Tests.Readers
     public sealed class MemoryResourceReaderTests
     {
         private readonly IResourceStore resourceStore;
-        private readonly IOptions<ResourceReaderOptions> options;
+        private readonly IOptions<PaginationOptions> options;
         private readonly ILogger<MemoryResourceReader> logger;
 
         public MemoryResourceReaderTests(IServiceProvider serviceProvider)
@@ -19,7 +20,7 @@ namespace MD.Journal.IO.Tests.Readers
             }
 
             this.resourceStore = serviceProvider.GetRequiredService<IResourceStore>();
-            this.options = serviceProvider.GetRequiredService<IOptions<ResourceReaderOptions>>();
+            this.options = serviceProvider.GetRequiredService<IOptions<PaginationOptions>>();
             this.logger = serviceProvider.GetRequiredService<ILogger<MemoryResourceReader>>();
         }
 

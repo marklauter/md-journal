@@ -1,4 +1,5 @@
-﻿using MD.Journal.IO.Readers;
+﻿using MD.Journal.IO.Pagination;
+using MD.Journal.IO.Readers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -7,7 +8,7 @@ namespace MD.Journal.IO.Tests.Readers
 {
     public sealed class FileResourceReaderTests
     {
-        private readonly IOptions<ResourceReaderOptions> options;
+        private readonly IOptions<PaginationOptions> options;
         private readonly ILogger<FileResourceReader> logger;
 
         public FileResourceReaderTests(IServiceProvider serviceProvider)
@@ -17,7 +18,7 @@ namespace MD.Journal.IO.Tests.Readers
                 throw new ArgumentNullException(nameof(serviceProvider));
             }
 
-            this.options = serviceProvider.GetRequiredService<IOptions<ResourceReaderOptions>>();
+            this.options = serviceProvider.GetRequiredService<IOptions<PaginationOptions>>();
             this.logger = serviceProvider.GetRequiredService<ILogger<FileResourceReader>>();
         }
 

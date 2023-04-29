@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace MD.Journal.IO.Readers
+namespace MD.Journal.IO.Pagination
 {
     public readonly struct PaginationToken
     {

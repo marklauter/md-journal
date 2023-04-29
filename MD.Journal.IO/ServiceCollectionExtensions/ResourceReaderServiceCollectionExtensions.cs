@@ -1,4 +1,6 @@
-﻿using MD.Journal.IO.Readers;
+﻿using MD.Journal.IO.Indexes;
+using MD.Journal.IO.Readers;
+using MD.Journal.IO.Recents;
 using MD.Journal.IO.Writers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -34,6 +36,18 @@ namespace MD.Journal.IO.ServiceCollectionExtensions
         public static IServiceCollection AddResourceStore(this IServiceCollection services)
         {
             services.TryAddSingleton<IResourceStore, ResourceStore>();
+            return services;
+        }
+
+        public static IServiceCollection AddIndexCatalog(this IServiceCollection services)
+        {
+            services.TryAddSingleton<IIndexCatalog, IndexCatalog>();
+            return services;
+        }
+
+        public static IServiceCollection AddRecentItemsCatalog(this IServiceCollection services)
+        {
+            services.TryAddSingleton<IRecentItemsCatalog, RecentItemsCatalog>();
             return services;
         }
     }
