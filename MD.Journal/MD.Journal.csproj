@@ -38,7 +38,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Indexes\" />
+	  <Folder Include="Recents\" />
 	</ItemGroup>
 
 </Project>
