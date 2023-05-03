@@ -17,7 +17,6 @@ namespace MD.Journal.IO.Recents
         private readonly ILogger<RecentItems> logger;
 
         public RecentItems(
-            ResourceUri uri,
             IResourceReader reader,
             IResourceWriter writer,
             IOptions<RecentItemsOptions> options,
@@ -29,7 +28,7 @@ namespace MD.Journal.IO.Recents
             }
 
             this.entryLimit = options.Value.EntryLimit;
-            this.uri = uri;
+            this.uri = ResourceUri.Empty.WithPath(options.Value.Path, options.Value.Name);
             this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
             this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));

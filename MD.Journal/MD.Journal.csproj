@@ -38,7 +38,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Recents\" />
+	  <ProjectReference Include="..\MD.Journal.IO\MD.Journal.IO.csproj" />
 	</ItemGroup>
 
 </Project>

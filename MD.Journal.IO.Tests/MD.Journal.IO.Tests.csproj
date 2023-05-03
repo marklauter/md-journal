@@ -31,9 +31,4 @@
 		<ProjectReference Include="..\MD.Journal.IO\MD.Journal.IO.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="Indexes\" />
-		<Folder Include="Repositories\" />
-	</ItemGroup>
-
 </Project>

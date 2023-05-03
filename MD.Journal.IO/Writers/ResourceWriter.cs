@@ -1,76 +1,39 @@
-﻿//using Grynwald.MarkdownGenerator;
+﻿using Microsoft.Extensions.Logging;
 
-//namespace MD.Journal.IO.Internal
-//{
-//    internal abstract class ResourceWriter
-//        : IResourceWriter
-//    {
-//        public ResourceWriter(string path, string resourceName)
-//        {
-//            if (String.IsNullOrWhiteSpace(path))
-//            {
-//                throw new ArgumentException($"'{nameof(path)}' cannot be null or whitespace.", nameof(path));
-//            }
+namespace MD.Journal.IO.Writers
+{
+    internal sealed class ResourceWriter
+        : IResourceWriter
+    {
+        private readonly ILogger<ResourceWriter> logger;
 
-//            if (String.IsNullOrWhiteSpace(resourceName))
-//            {
-//                throw new ArgumentException($"'{nameof(resourceName)}' cannot be null or whitespace.", nameof(resourceName));
-//            }
+        public ResourceWriter(ILogger<ResourceWriter> logger)
+        {
+            this.logger = logger;
+        }
 
-//            this.Uri = System.IO.Path.Combine(path, resourceName);
-//            this.Path = path;
-//            this.ResourceName = resourceName;
-//        }
+        public Task AppendLineAsync(ResourceUri uri, string line)
+        {
+            this.logger.LogInformation("{MethodName}({Uri})", nameof(AppendLineAsync), (string)uri);
+            return File.AppendAllLinesAsync(uri, new string[] { line });
+        }
 
-//        public string Path { get; }
-//        public string ResourceName { get; }
-//        public string Uri { get; }
+        public Task AppendTextAsync(ResourceUri uri, string text)
+        {
+            this.logger.LogInformation("{MethodName}({Uri})", nameof(AppendTextAsync), (string)uri);
+            return File.AppendAllTextAsync(uri, text);
+        }
 
-//        public abstract Task AppendLineAsync(string value);
-//        public abstract Task AppendTextAsync(string value);
-//        public abstract Task OverwriteAllLinesAsync(IEnumerable<string> lines);
-//        public abstract Task OverwriteAllTextAsync(string value);
-//        public abstract Task<IEnumerable<string>> ReadAllLinesAsync();
-//        public abstract Task<IEnumerable<string>> ReadLinesAsync(Pagination pagination);
-//        public abstract Task<string> ReadTextAsync();
-//    }
+        public Task OverwriteAllLinesAsync(ResourceUri uri, IEnumerable<string> lines)
+        {
+            this.logger.LogInformation("{MethodName}({Uri})", nameof(OverwriteAllLinesAsync), (string)uri);
+            return File.WriteAllLinesAsync(uri, lines);
+        }
 
-
-//    internal abstract class MemoryResourceStore
-//        : IResource
-//    {
-//        public MemoryResourceStore(string path, string resourceName)
-//        {
-//            if (String.IsNullOrWhiteSpace(path))
-//            {
-//                throw new ArgumentException($"'{nameof(path)}' cannot be null or whitespace.", nameof(path));
-//            }
-
-//            if (String.IsNullOrWhiteSpace(resourceName))
-//            {
-//                throw new ArgumentException($"'{nameof(resourceName)}' cannot be null or whitespace.", nameof(resourceName));
-//            }
-
-//            this.Uri = System.IO.Path.Combine(path, resourceName);
-//            this.Path = path;
-//            this.ResourceName = resourceName;
-//        }
-
-//        public string Path { get; }
-//        public string ResourceName { get; }
-//        public string Uri { get; }
-
-//        public abstract Task AppendLineAsync(string value);
-//        public abstract Task AppendTextAsync(string value);
-//        public abstract Task OverwriteAllLinesAsync(IEnumerable<string> lines);
-//        public abstract Task OverwriteAllTextAsync(string value);
-//        public abstract Task<IEnumerable<string>> ReadAllLinesAsync();
-//        public abstract Task<IEnumerable<string>> ReadLinesAsync(Pagination pagination);
-//        public abstract Task<string> ReadTextAsync();
-
-//        public void Save(string path)
-//        {
-//            throw new NotImplementedException();
-//        }
-//    }
-//}
+        public Task OverwriteAllTextAsync(ResourceUri uri, string text)
+        {
+            this.logger.LogInformation("{MethodName}({Uri})", nameof(OverwriteAllTextAsync), (string)uri);
+            return File.WriteAllTextAsync(uri, text);
+        }
+    }
+}

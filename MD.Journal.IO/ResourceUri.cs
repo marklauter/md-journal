@@ -9,7 +9,7 @@ namespace MD.Journal.IO
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ResourceUri Append(params string[] paths)
+        public ResourceUri WithPath(params string[] paths)
         {
             paths = new string[] { this }.Union(paths).ToArray();
             return new(paths);
@@ -17,7 +17,7 @@ namespace MD.Journal.IO
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ResourceUri Append(string path)
+        public ResourceUri WithPath(string path)
         {
             return new(this, path);
         }
@@ -35,7 +35,7 @@ namespace MD.Journal.IO
                 throw new ArgumentException($"'{nameof(paths)}' cannot be empty.", nameof(paths));
             }
 
-            this.value = System.IO.Path.Combine(paths);
+            this.value = Path.Combine(paths);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -60,9 +60,9 @@ namespace MD.Journal.IO
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator string(ResourceUri ResourceUri)
+        public static implicit operator string(ResourceUri resourceUri)
         {
-            return ResourceUri.value;
+            return resourceUri.value;
         }
 
         [Pure]

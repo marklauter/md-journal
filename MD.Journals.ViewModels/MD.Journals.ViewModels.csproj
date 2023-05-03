@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MD.Journal.IO\MD.Journal.IO.csproj" />
+    <ProjectReference Include="..\MD.Journal\MD.Journal.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -6,12 +6,12 @@ using Microsoft.Extensions.Options;
 
 namespace MD.Journal.IO.Tests.Readers
 {
-    public sealed class FileResourceReaderTests
+    public sealed class ResourceReaderTests
     {
         private readonly IOptions<PaginationOptions> options;
-        private readonly ILogger<FileResourceReader> logger;
+        private readonly ILogger<ResourceReader> logger;
 
-        public FileResourceReaderTests(IServiceProvider serviceProvider)
+        public ResourceReaderTests(IServiceProvider serviceProvider)
         {
             if (serviceProvider is null)
             {
@@ -19,7 +19,7 @@ namespace MD.Journal.IO.Tests.Readers
             }
 
             this.options = serviceProvider.GetRequiredService<IOptions<PaginationOptions>>();
-            this.logger = serviceProvider.GetRequiredService<ILogger<FileResourceReader>>();
+            this.logger = serviceProvider.GetRequiredService<ILogger<ResourceReader>>();
         }
 
         private static async Task<string[]> AddResourceAsync(ResourceUri uri, int count)
@@ -44,7 +44,7 @@ namespace MD.Journal.IO.Tests.Readers
             var uri = (ResourceUri)Guid.NewGuid().ToString();
             var expectedLines = await AddResourceAsync(uri, count);
 
-            var reader = new FileResourceReader(this.options, this.logger);
+            var reader = new ResourceReader(this.options, this.logger);
 
             var actualLines = await reader.ReadAllLinesAsync(uri);
 
@@ -63,7 +63,7 @@ namespace MD.Journal.IO.Tests.Readers
             var uri = (ResourceUri)Guid.NewGuid().ToString();
             var expectedLines = await AddResourceAsync(uri, count);
 
-            var reader = new FileResourceReader(this.options, this.logger);
+            var reader = new ResourceReader(this.options, this.logger);
 
             var actualResponse = await reader.ReadLinesAsync(uri);
 
@@ -86,7 +86,7 @@ namespace MD.Journal.IO.Tests.Readers
 
             _ = await AddResourceAsync(uri, count);
 
-            var reader = new FileResourceReader(this.options, this.logger);
+            var reader = new ResourceReader(this.options, this.logger);
 
             var actualResponse = await reader.ReadLinesAsync(uri);
 
@@ -109,7 +109,7 @@ namespace MD.Journal.IO.Tests.Readers
 
             _ = await AddResourceAsync(uri, count);
 
-            var reader = new FileResourceReader(this.options, this.logger);
+            var reader = new ResourceReader(this.options, this.logger);
 
             var actualResponse = await reader.ReadLinesAsync(uri);
             actualResponse = await reader.ReadLinesAsync(actualResponse.PaginationToken);

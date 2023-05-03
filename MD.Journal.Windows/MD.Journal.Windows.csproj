@@ -48,6 +48,7 @@
 		<ProjectCapability Include="Msix" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\MD.Journal.IO\MD.Journal.IO.csproj" />
 		<ProjectReference Include="..\MD.Journal\MD.Journal.csproj" />
 	</ItemGroup>
 	<ItemGroup>

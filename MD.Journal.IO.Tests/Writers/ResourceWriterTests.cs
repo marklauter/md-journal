@@ -1,5 +1,9 @@
-﻿using MD.Journal.IO.Readers;
+﻿using MD.Journal.IO.Pagination;
+using MD.Journal.IO.Readers;
 using MD.Journal.IO.Writers;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace MD.Journal.IO.Tests.Writers
 {
@@ -17,9 +21,20 @@ namespace MD.Journal.IO.Tests.Writers
 
         public IServiceProvider ServiceProvider { get; }
 
-        protected abstract IResourceReader GetReader();
+        protected IResourceReader GetReader()
+        {
+            var options = this.ServiceProvider.GetRequiredService<IOptions<PaginationOptions>>();
+            var logger = this.ServiceProvider.GetRequiredService<ILogger<ResourceReader>>();
 
-        protected abstract IResourceWriter GetWriter();
+            return new ResourceReader(options, logger);
+        }
+
+        protected IResourceWriter GetWriter()
+        {
+            var logger = this.ServiceProvider.GetRequiredService<ILogger<ResourceWriter>>();
+
+            return new ResourceWriter(logger);
+        }
 
         [Theory]
         [InlineData(1)]

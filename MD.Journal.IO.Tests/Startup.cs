@@ -1,5 +1,4 @@
 ﻿using MD.Journal.IO.Pagination;
-using MD.Journal.IO.ServiceCollectionExtensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -12,7 +11,6 @@ namespace MD.Journal.IO.Tests
         {
             services
                 .AddLogging()
-                .AddResourceStore()
                 .TryAddTransient(serviceProvider => Options.Create(new PaginationOptions { PageSize = 5 }));
         }
     }
