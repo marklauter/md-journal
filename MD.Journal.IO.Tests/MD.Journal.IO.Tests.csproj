@@ -31,4 +31,9 @@
 		<ProjectReference Include="..\MD.Journal.IO\MD.Journal.IO.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Resources\" />
+	  <Folder Include="Recents\" />
+	</ItemGroup>
+
 </Project>
