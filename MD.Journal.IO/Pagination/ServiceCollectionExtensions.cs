@@ -5,7 +5,7 @@ namespace MD.Journal.IO.Pagination
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddResourceReader(
+        public static IServiceCollection AddPaginationOptions(
             this IServiceCollection services,
             IConfiguration configuration)
         {
