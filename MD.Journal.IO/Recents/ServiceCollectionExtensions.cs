@@ -25,6 +25,16 @@ namespace MD.Journal.IO.Recents
             string path,
             string name)
         {
+            if (String.IsNullOrEmpty(path))
+            {
+                throw new ArgumentException($"'{nameof(path)}' cannot be null or empty.", nameof(path));
+            }
+
+            if (String.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
+            }
+
             var reader = serviceProvider.GetRequiredService<IResourceReader>();
             var writer = serviceProvider.GetRequiredService<IResourceWriter>();
             var logger = serviceProvider.GetRequiredService<ILogger<RecentItems>>();

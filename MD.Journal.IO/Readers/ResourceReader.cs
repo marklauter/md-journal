@@ -9,6 +9,9 @@ namespace MD.Journal.IO.Readers
     internal sealed class ResourceReader
         : IResourceReader
     {
+        private readonly int pageSize;
+        private readonly ILogger<ResourceReader> logger;
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ResourceReader(
             IOptions<PaginationOptions> options,
@@ -19,18 +22,15 @@ namespace MD.Journal.IO.Readers
                 throw new ArgumentNullException(nameof(options));
             }
 
-            this.PageSize = options.Value.PageSize;
-            this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.pageSize = options.Value.PageSize;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-
-        public int PageSize { get; }
-        public ILogger<ResourceReader> Logger { get; }
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public async Task<IEnumerable<string>> ReadAllLinesAsync(ResourceUri uri)
         {
-            this.Logger.LogInformation("{MethodName}({Uri})", nameof(ReadAllLinesAsync), (string)uri);
+            this.logger.LogInformation("{MethodName}({Uri})", nameof(ReadAllLinesAsync), (string)uri);
 
             return !File.Exists(uri)
                 ? Enumerable.Empty<string>()
@@ -41,7 +41,7 @@ namespace MD.Journal.IO.Readers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Task<ReadResponse> ReadLinesAsync(ResourceUri uri)
         {
-            this.Logger.LogInformation("{MethodName}({Uri})", nameof(ReadLinesAsync), (string)uri);
+            this.logger.LogInformation("{MethodName}({Uri})", nameof(ReadLinesAsync), (string)uri);
 
             return this.ReadLinesAsync(PaginationToken.Bof(uri));
         }
@@ -49,7 +49,7 @@ namespace MD.Journal.IO.Readers
         [Pure]
         public async Task<ReadResponse> ReadLinesAsync(PaginationToken paginationToken)
         {
-            this.Logger.LogInformation("{MethodName}({@PaginationToken})", nameof(ReadLinesAsync), paginationToken);
+            this.logger.LogInformation("{MethodName}({@PaginationToken})", nameof(ReadLinesAsync), paginationToken);
 
             var uri = paginationToken.Uri;
             if (!File.Exists(uri))
@@ -61,8 +61,8 @@ namespace MD.Journal.IO.Readers
 
             var linenumber = 0;
             var start = paginationToken.NextPageStart;
-            var end = start + this.PageSize;
-            var lines = new string[this.PageSize];
+            var end = start + this.pageSize;
+            var lines = new string[this.pageSize];
 
             using var stream = File.OpenRead(uri);
             using var reader = new StreamReader(stream);
@@ -91,7 +91,7 @@ namespace MD.Journal.IO.Readers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Task<string> ReadTextAsync(ResourceUri uri)
         {
-            this.Logger.LogInformation("{MethodName}({Uri})", nameof(ReadTextAsync), (string)uri);
+            this.logger.LogInformation("{MethodName}({Uri})", nameof(ReadTextAsync), (string)uri);
 
             return !File.Exists(uri)
                 ? Task.FromResult(String.Empty)
@@ -101,7 +101,7 @@ namespace MD.Journal.IO.Readers
         [Pure]
         public async Task<string> ReadTextAsync(ResourceUri uri, int offset, int length)
         {
-            this.Logger.LogInformation("{MethodName}({Uri}, {Offset}, {Length})", nameof(ReadTextAsync), (string)uri, offset, length);
+            this.logger.LogInformation("{MethodName}({Uri}, {Offset}, {Length})", nameof(ReadTextAsync), (string)uri, offset, length);
 
             if (!File.Exists(uri))
             {

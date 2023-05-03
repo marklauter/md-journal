@@ -66,6 +66,11 @@ namespace MD.Journal.IO.Indexes
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public async Task<IEnumerable<IndexEntry<TValue>>> ReadAsync(string key)
         {
+            if (String.IsNullOrEmpty(key))
+            {
+                throw new ArgumentException($"'{nameof(key)}' cannot be null or empty.", nameof(key));
+            }
+
             this.logger.LogInformation("{MethodName}({Key}, {Uri})", nameof(ReadAsync), key, (string)this.indexUri);
 
             return (await this.ReadEntriesAsync())

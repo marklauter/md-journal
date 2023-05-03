@@ -9,7 +9,9 @@ namespace MD.Journal.IO.Pagination
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            return services.Configure<PaginationOptions>(configuration.GetSection(nameof(PaginationOptions)));
+            return configuration is null
+                ? throw new ArgumentNullException(nameof(configuration))
+                : services.Configure<PaginationOptions>(configuration.GetSection(nameof(PaginationOptions)));
         }
     }
 }

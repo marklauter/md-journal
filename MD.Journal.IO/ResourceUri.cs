@@ -11,6 +11,11 @@ namespace MD.Journal.IO
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ResourceUri WithPath(params string[] paths)
         {
+            if (paths is null)
+            {
+                throw new ArgumentNullException(nameof(paths));
+            }
+
             paths = new string[] { this }.Union(paths).ToArray();
             return new(paths);
         }

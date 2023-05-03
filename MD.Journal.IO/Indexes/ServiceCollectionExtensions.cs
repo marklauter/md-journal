@@ -25,6 +25,16 @@ namespace MD.Journal.IO.Indexes
             string path,
             string name) where TValue : IComparable<TValue>
         {
+            if (String.IsNullOrEmpty(path))
+            {
+                throw new ArgumentException($"'{nameof(path)}' cannot be null or empty.", nameof(path));
+            }
+
+            if (String.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
+            }
+
             var reader = serviceProvider.GetRequiredService<IResourceReader>();
             var writer = serviceProvider.GetRequiredService<IResourceWriter>();
             var options = Options.Create(new IndexOptions { Name = name, Path = path });
@@ -53,6 +63,16 @@ namespace MD.Journal.IO.Indexes
             string path,
             string name)
         {
+            if (String.IsNullOrEmpty(path))
+            {
+                throw new ArgumentException($"'{nameof(path)}' cannot be null or empty.", nameof(path));
+            }
+
+            if (String.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
+            }
+
             var reader = serviceProvider.GetRequiredService<IResourceReader>();
             var writer = serviceProvider.GetRequiredService<IResourceWriter>();
             var options = Options.Create(new IndexOptions { Name = name, Path = path });

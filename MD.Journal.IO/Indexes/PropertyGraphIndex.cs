@@ -82,6 +82,11 @@ namespace MD.Journal.IO.Indexes
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Task<IEnumerable<string>> ReadValuesAsync(string key)
         {
+            if (String.IsNullOrEmpty(key))
+            {
+                throw new ArgumentException($"'{nameof(key)}' cannot be null or empty.", nameof(key));
+            }
+
             this.logger.LogInformation("{MethodName}({Key})", nameof(ReadValuesAsync), key);
             var valuesUri = this.rootUri.WithPath($"{(PropertyId)key}.values");
             return this.reader.ReadAllLinesAsync(valuesUri);
