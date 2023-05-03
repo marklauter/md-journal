@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 
 namespace MD.Journals.ViewModels
 {
-    //Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
     internal sealed class JournalsCatalogViewModel
     {
         private readonly IJournalCatalog journalCatalog;
