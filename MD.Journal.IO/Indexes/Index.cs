@@ -38,28 +38,28 @@ namespace MD.Journal.IO.Indexes
             this.logger.LogInformation("{MethodName}({IndexUri})", "ctor", (string)this.indexUri);
         }
 
-        [Pure]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private async Task<IEnumerable<IndexEntry<TValue>>> ReadEntriesAsync()
-        {
-            this.logger.LogInformation("{MethodName}({Uri})", nameof(ReadEntriesAsync), (string)this.indexUri);
-
-            return (await this.reader.ReadAllLinesAsync(this.indexUri))
-                .Where(line => !String.IsNullOrWhiteSpace(line))
-                .Distinct()
-                .Select(line => (IndexEntry<TValue>)line);
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public async Task PackAsync()
         {
             this.logger.LogInformation("{MethodName}({Uri})", nameof(PackAsync), (string)this.indexUri);
 
-            var lines = (await this.ReadEntriesAsync())
+            var lines = (await this.ReadAsync())
                 .Order()
                 .Select(item => (string)item);
 
             await this.writer.OverwriteAllLinesAsync(this.indexUri, lines);
+        }
+
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public async Task<IEnumerable<IndexEntry<TValue>>> ReadAsync()
+        {
+            this.logger.LogInformation("{MethodName}({Uri})", nameof(ReadAsync), (string)this.indexUri);
+
+            return (await this.reader.ReadAllLinesAsync(this.indexUri))
+                .Where(line => !String.IsNullOrWhiteSpace(line))
+                .Distinct()
+                .Select(line => (IndexEntry<TValue>)line);
         }
 
         [Pure]
@@ -73,7 +73,7 @@ namespace MD.Journal.IO.Indexes
 
             this.logger.LogInformation("{MethodName}({Key}, {Uri})", nameof(ReadAsync), key, (string)this.indexUri);
 
-            return (await this.ReadEntriesAsync())
+            return (await this.ReadAsync())
                 .Where(entry => String.Compare(entry.Key, key, StringComparison.OrdinalIgnoreCase) == 0);
         }
 

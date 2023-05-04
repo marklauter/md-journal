@@ -3,6 +3,8 @@ using MD.Journal.IO.Writers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace MD.Journal.IO.Recents
 {
@@ -18,6 +20,16 @@ namespace MD.Journal.IO.Recents
             return services.AddTransient<Func<string, string, IRecentItems>>(
                 serviceProvider =>
                 (path, name) => serviceProvider.CreateNamedRecentItems(path, name));
+        }
+
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IRecentItems GetRecentItems(
+            this IServiceProvider serviceProvider,
+            string path,
+            string name)
+        {
+            return serviceProvider.GetRequiredService<Func<string, string, IRecentItems>>()(path, name);
         }
 
         private static IRecentItems CreateNamedRecentItems(

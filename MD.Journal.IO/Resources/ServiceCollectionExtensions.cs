@@ -1,6 +1,8 @@
 ﻿using MD.Journal.IO.Readers;
 using MD.Journal.IO.Writers;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace MD.Journal.IO.Resources
 {
@@ -16,6 +18,15 @@ namespace MD.Journal.IO.Resources
             return services.AddTransient<Func<ResourceUri, IResource<T>>>(
                 serviceProvider =>
                 (uri) => serviceProvider.CreateNamedResource<T>(uri));
+        }
+
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IResource<T> GetResource<T>(
+            this IServiceProvider serviceProvider,
+            ResourceUri uri)
+        {
+            return serviceProvider.GetRequiredService<Func<ResourceUri, IResource<T>>>()(uri);
         }
 
         private static IResource<T> CreateNamedResource<T>(

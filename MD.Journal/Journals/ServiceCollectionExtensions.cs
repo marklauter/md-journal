@@ -1,7 +1,11 @@
 ﻿using MD.Journal.IO;
+using MD.Journal.IO.Readers;
 using MD.Journal.IO.Recents;
+using MD.Journal.IO.Writers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace MD.Journal.Journals
 {
@@ -11,22 +15,43 @@ namespace MD.Journal.Journals
         {
             services.TryAddTransient<Func<ResourceUri, IJournal>>(
                 services =>
-                uri => new Journal(uri));
+                uri => new Journal(
+                    uri,
+                    services.GetRequiredService<IResourceReader>(),
+                    services.GetRequiredService<IResourceWriter>(),
+                    services));
+
             return services;
         }
 
-        public static IServiceCollection AddJournalCatalog(
-            this IServiceCollection services)
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IJournal GetJournal(
+            this IServiceProvider serviceProvider,
+            ResourceUri uri)
         {
-            return services.AddTransient<IJournalCatalog>(servicesProvider =>
-            {
-                var createRecentItems = servicesProvider.GetRequiredService<Func<string, string, IRecentItems>>();
-                var recentItems = createRecentItems(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "journals.recent");
+            return serviceProvider.GetRequiredService<Func<ResourceUri, IJournal>>()(uri);
+        }
 
-                return new JournalCatalog(recentItems, servicesProvider);
-            });
+        public static IServiceCollection AddJournalCatalog(this IServiceCollection services)
+        {
+            return services.AddTransient<Func<string, string, IJournalCatalog>>(
+                servicesProvider =>
+                (path, name) =>
+                {
+                    var recentItems = servicesProvider.GetRecentItems(path, name);
+                    return new JournalCatalog(recentItems, servicesProvider);
+                });
+        }
+
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IJournalCatalog GetJournalCatalog(
+            this IServiceProvider serviceProvider,
+            string recentItemsPath,
+            string recentItemsName)
+        {
+            return serviceProvider.GetRequiredService<Func<string, string, IJournalCatalog>>()(recentItemsPath, recentItemsName);
         }
     }
 }

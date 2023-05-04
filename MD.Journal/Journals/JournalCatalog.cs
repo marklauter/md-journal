@@ -1,6 +1,5 @@
 ﻿using MD.Journal.IO;
 using MD.Journal.IO.Recents;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace MD.Journal.Journals
 {
@@ -25,7 +24,7 @@ namespace MD.Journal.Journals
 
         public async Task<IJournal> OpenJournalAsync(ResourceUri uri)
         {
-            var journal = this.serviceProvider.GetRequiredService<Func<ResourceUri, IJournal>>()(uri);
+            var journal = this.serviceProvider.GetJournal(uri);
             await this.recentItems.TouchAsync(new RecentItem(journal.Uri, DateTime.UtcNow));
             return journal;
         }
