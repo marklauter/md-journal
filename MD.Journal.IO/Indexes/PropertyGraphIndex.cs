@@ -32,8 +32,8 @@ namespace MD.Journal.IO.Indexes
             this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
             this.logger = logger;
             this.options = options.Value;
-            this.rootUri = ResourceUri.Empty.WithPath(this.options.Path);
-            this.indexUri = this.rootUri.WithPath(this.options.Name);
+            this.rootUri = ResourceUri.Empty.Combine(this.options.Path);
+            this.indexUri = this.rootUri.Combine(this.options.Name);
             this.logger.LogInformation("{MethodName}({IndexUri})", "ctor", (string)this.indexUri);
         }
 
@@ -56,7 +56,7 @@ namespace MD.Journal.IO.Indexes
                 await this.writer.AppendLineAsync(this.indexUri, key);
             }
 
-            var valuesUri = this.rootUri.WithPath($"{(PropertyId)key}.values");
+            var valuesUri = this.rootUri.Combine($"{(PropertyId)key}.values");
             await this.writer.AppendLineAsync(valuesUri, value);
         }
 
@@ -88,7 +88,7 @@ namespace MD.Journal.IO.Indexes
             }
 
             this.logger.LogInformation("{MethodName}({Key})", nameof(ReadValuesAsync), key);
-            var valuesUri = this.rootUri.WithPath($"{(PropertyId)key}.values");
+            var valuesUri = this.rootUri.Combine($"{(PropertyId)key}.values");
             return this.reader.ReadAllLinesAsync(valuesUri);
         }
 

@@ -32,8 +32,8 @@ namespace MD.Journal.IO.Indexes
             this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
             this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
             this.options = options.Value;
-            this.rootUri = ResourceUri.Empty.WithPath(this.options.Path);
-            this.indexUri = this.rootUri.WithPath(this.options.Name);
+            this.rootUri = ResourceUri.Empty.Combine(this.options.Path);
+            this.indexUri = this.rootUri.Combine(this.options.Name);
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.logger.LogInformation("{MethodName}({IndexUri})", "ctor", (string)this.indexUri);
         }

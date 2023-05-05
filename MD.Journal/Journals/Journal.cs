@@ -1,22 +1,25 @@
 ﻿using MD.Journal.IO;
 using MD.Journal.IO.Indexes;
 using MD.Journal.IO.Readers;
+using MD.Journal.IO.Recents;
 using MD.Journal.IO.Writers;
+using MD.Journal.Markdown;
 using Newtonsoft.Json;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
 namespace MD.Journal.Journals
 {
-    public sealed class Journal
+    internal sealed class Journal
         : IJournal
     {
         private readonly IResourceReader resourceReader;
         private readonly IResourceWriter resourceWriter;
         private readonly IServiceProvider serviceProvider;
-        private readonly IPropertyGraphIndex tagPGI;
-        private readonly IIndex<DateTime> journalEntriesByDateIndex;
-        private readonly IIndex<string> journalEntriesByAuthorIndex;
+        private readonly IPropertyGraphIndex tags;
+        private readonly IRecentItems recentAuthors;
+        private readonly IIndex<DateTime> journalEntriesByDate;
+        private readonly IIndex<string> journalEntriesByAuthor;
 
         public Journal(
             ResourceUri uri,
@@ -29,9 +32,9 @@ namespace MD.Journal.Journals
             this.resourceWriter = resourceWriter ?? throw new ArgumentNullException(nameof(resourceWriter));
             this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
-            this.tagPGI = this.serviceProvider.GetNamedPropertyGraphIndex(uri, "tags.pgi");
-            this.journalEntriesByDateIndex = this.serviceProvider.GetNamedIndex<DateTime>(uri, "journalEntriesByDate.index");
-            this.journalEntriesByAuthorIndex = this.serviceProvider.GetNamedIndex<string>(uri, "journalEntriesByAuthor.index");
+            this.tags = this.serviceProvider.GetNamedPropertyGraphIndex(uri, $"{nameof(this.tags)}.pgi");
+            this.journalEntriesByDate = this.serviceProvider.GetNamedIndex<DateTime>(uri, $"{nameof(this.journalEntriesByDate)}.index");
+            this.journalEntriesByAuthor = this.serviceProvider.GetNamedIndex<string>(uri, $"{nameof(this.journalEntriesByAuthor)}.index");
         }
 
         public ResourceUri Uri { get; }
@@ -40,7 +43,7 @@ namespace MD.Journal.Journals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public async Task<IEnumerable<string>> ReadTagsAsync()
         {
-            return (await this.tagPGI.ReadPropertiesAsync())
+            return (await this.tags.ReadPropertiesAsync())
                 .Order();
         }
 
@@ -48,22 +51,27 @@ namespace MD.Journal.Journals
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public async Task<IEnumerable<JournalEntry>> ReadAsync()
         {
-            var entryIds = (await this.journalEntriesByDateIndex.ReadAsync())
+            var entryIds = (await this.journalEntriesByDate.ReadAsync())
+                .OrderDescending()
                 .Select(item => item.Key);
             return await this.ReadAsync(entryIds);
         }
 
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public async Task<JournalEntry> ReadAsync(string journalEntryId)
         {
-            var uri = this.Uri.WithPath($"{journalEntryId}.json");
+            var uri = this.Uri.Combine($"{journalEntryId}.json");
             var json = await this.resourceReader.ReadTextAsync(uri);
 
             return JsonConvert.DeserializeObject<JournalEntry>(json)!;
         }
 
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public async Task<IEnumerable<JournalEntry>> ReadAsync(IEnumerable<string> journalEntryIds)
         {
-            var tasks = new List<Task<JournalEntry?>>();
+            var tasks = new List<Task<JournalEntry>>();
             foreach (var id in journalEntryIds)
             {
                 tasks.Add(this.ReadAsync(id));
@@ -71,105 +79,47 @@ namespace MD.Journal.Journals
 
             return await Task.WhenAll(tasks);
         }
+
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public async Task<IEnumerable<JournalEntry>> FindAsync(string tag)
+        {
+            var entryIds = await this.tags.ReadValuesAsync(tag);
+            return (await this.ReadAsync(entryIds))
+                .OrderByDescending(item => item.Date);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private Task WriteAsJson(JournalEntry journalEntry)
+        {
+            if (journalEntry is null)
+            {
+                throw new ArgumentNullException(nameof(journalEntry));
+            }
+
+            var uri = this.Uri
+                .Combine($"{journalEntry.Id}.json");
+            var json = JsonConvert.SerializeObject(journalEntry, Formatting.Indented);
+            return this.resourceWriter.OverwriteAllTextAsync(uri, json);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private Task WriteAsMarkdownAsync(JournalEntry journalEntry)
+        {
+            var uri = this.Uri
+                .Combine($"{journalEntry.Id}.md");
+            var markdown = journalEntry.ToMarkdownString();
+            return this.resourceWriter.OverwriteAllTextAsync(uri, markdown);
+
+        }
     }
 }
 
-//    public sealed class Journal
-//    {
-//        private readonly IIndexCatalog indexCatalog;
-//        private readonly IRecentItemsCatalog recentItemsCatalog;
-//        private readonly IRepositoryCatalog repositoryCatalog;
-//        private readonly IRecentItems recentAuthors;
-
-//        private Journal(
-//            string path,
-//            IIndexCatalog indexCatalog,
-//            IRecentItemsCatalog recentItemsCatalog,
-//            IRepositoryCatalog repositoryCatalog)
-//        {
-//            if (String.IsNullOrEmpty(path))
-//            {
-//                throw new ArgumentException($"'{nameof(path)}' cannot be null or empty.", nameof(path));
-//            }
-
-//            this.Path = path;
-//            this.indexCatalog = indexCatalog ?? throw new ArgumentNullException(nameof(indexCatalog));
-//            this.recentItemsCatalog = recentItemsCatalog ?? throw new ArgumentNullException(nameof(recentItemsCatalog));
-//            this.repositoryCatalog = repositoryCatalog ?? throw new ArgumentNullException(nameof(repositoryCatalog));
-
-//            this.recentAuthors = this.recentItemsCatalog.Open("recent-authors.json");
-//        }
-
-//        public string Path { get; }
-//    }
 
 //    public sealed class Journal
 //    {
-//        public static Journal Open<TStore>(string path)
-//            where TStore : MemoryResourceStore
-//        {
-//            return new Journal(path, new ResourceStoreGroup<TStore>(path));
-//        }
-
-//        private readonly IResourceStoreGroup stores;
-//        private readonly IRecentItems recentAuthors;
-//        private readonly IIndex<DateTime> journalByDateIndex;
-//        private readonly IIndex<string> journalByAuthorIndex;
 //        private readonly IResource tableOfContents;
 //        private readonly TagGraph tagGraph;
-
-//        public string Path { get; }
-//        public string Name { get; }
-
-//        private Journal(string path, IResourceStoreGroup stores)
-//        {
-//            if (String.IsNullOrWhiteSpace(path))
-//            {
-//                throw new ArgumentException($"'{nameof(path)}' cannot be null or whitespace.", nameof(path));
-//            }
-
-//            this.Path = path;
-//            this.Name = System.IO.Path.GetFileName(path);
-//            this.stores = stores;
-//            this.tagGraph = new TagGraph(stores);
-//            this.recentAuthors = new RecentItems(stores["recent-authors.json"], Options.Create(new RecentItemsOptions()));
-//            this.journalByDateIndex = new Index<DateTime>(stores["journal-date-index.json"]);
-//            this.journalByAuthorIndex = new Index<string>(stores["author-journal-index.json"]);
-//            this.tableOfContents = stores["toc.md"];
-//        }
-
-//        public async Task<JournalEntry?> ReadAsync(string journalEntryId)
-//        {
-//            var lines = await this.stores[$"{journalEntryId}.json"].ReadAllLinesAsync();
-//            return lines.Any()
-//                ? JsonConvert.DeserializeObject<JournalEntry>(String.Join(Environment.NewLine, lines))
-//                : null;
-//        }
-
-//        public async Task<IEnumerable<JournalEntry?>> ReadAsync(Pagination pagination)
-//        {
-//            var journalEntryIds = (await this.journalByDateIndex.ReadAsync(pagination))
-//                .Select(entry => entry.Key);
-//            return await this.ReadAsync(journalEntryIds);
-//        }
-
-//        public async Task<IEnumerable<JournalEntry?>> ReadAsync(IEnumerable<string> journalEntryIds)
-//        {
-//            var tasks = new List<Task<JournalEntry?>>();
-//            foreach (var id in journalEntryIds)
-//            {
-//                tasks.Add(this.ReadAsync(id));
-//            }
-
-//            return await Task.WhenAll(tasks);
-//        }
-
-//        public async Task<IEnumerable<JournalEntry?>> FindAsync(string tag, Pagination pagination)
-//        {
-//            var journalEntryIds = await this.tagGraph
-//                .ReadJournalIdsAsync(tag, pagination);
-//            return await this.ReadAsync(journalEntryIds);
-//        }
 
 //        public Task WriteAsync(
 //            JournalEntry journalEntry)

@@ -7,7 +7,7 @@ namespace MD.Journal.IO.Readers
     {
         public static IServiceCollection AddResourceReader(this IServiceCollection services)
         {
-            services.TryAddTransient<IResourceReader, ResourceReader>();
+            services.TryAddSingleton<IResourceReader, ResourceReader>();
             return services;
         }
     }

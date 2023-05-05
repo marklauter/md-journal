@@ -28,7 +28,7 @@ namespace MD.Journal.IO.Recents
             }
 
             this.entryLimit = options.Value.EntryLimit;
-            this.uri = ResourceUri.Empty.WithPath(options.Value.Path, options.Value.Name);
+            this.uri = ResourceUri.Empty.Combine(options.Value.Path, options.Value.Name);
             this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
             this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));

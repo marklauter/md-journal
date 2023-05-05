@@ -7,7 +7,7 @@ namespace MD.Journal.IO.Writers
     {
         public static IServiceCollection AddResourceWriter(this IServiceCollection services)
         {
-            services.TryAddTransient<IResourceWriter, ResourceWriter>();
+            services.TryAddSingleton<IResourceWriter, ResourceWriter>();
             return services;
         }
     }

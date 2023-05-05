@@ -9,7 +9,7 @@ namespace MD.Journal.IO
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ResourceUri WithPath(params string[] paths)
+        public ResourceUri Combine(params string[] paths)
         {
             if (paths is null)
             {
@@ -22,7 +22,7 @@ namespace MD.Journal.IO
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ResourceUri WithPath(string path)
+        public ResourceUri Combine(string path)
         {
             return new(this, path);
         }
