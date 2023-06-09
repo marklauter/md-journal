@@ -8,13 +8,12 @@ public sealed partial class DocumentTemplate
     // http://regexstorm.net/tester
 
     [GeneratedRegex(@"[^\{{2}]+(?=\}{2})", RegexOptions.Singleline)]
-    private static partial Regex FieldPattern();
+    private static partial Regex FieldKeyPattern();
 
     [GeneratedRegex(@"(?<key>\{{2}\w*\}{2})", RegexOptions.Singleline)]
-    private static partial Regex SplitPattern();
+    private static partial Regex SplitOnFieldPattern();
 
-    private readonly string[] fields;
-    private readonly Dictionary<string, string> values;
+    private readonly Dictionary<string, string> properties;
 
     public DocumentTemplate(string content)
     {
@@ -24,13 +23,25 @@ public sealed partial class DocumentTemplate
         }
 
         this.Content = content;
-        this.fields = GetFields(content).ToArray();
-        this.values = this.fields.ToDictionary(key => key);
+        this.properties = GetFieldKeys(content)
+            .ToDictionary(key => key);
     }
 
-    private static IEnumerable<string> GetFields(string content)
+    public DocumentTemplate(DocumentRecord record)
+        : this(record?.Content ?? throw new ArgumentNullException(nameof(record)))
     {
-        var match = FieldPattern().Match(content);
+        foreach (var kvp in record.Properties)
+        {
+            if (this.properties.ContainsKey(kvp.Key))
+            {
+                this.Write(kvp.Key, kvp.Value);
+            }
+        }
+    }
+
+    private static IEnumerable<string> GetFieldKeys(string content)
+    {
+        var match = FieldKeyPattern().Match(content);
         while (match.Captures.Count == 1)
         {
             yield return match.Value;
@@ -40,17 +51,13 @@ public sealed partial class DocumentTemplate
 
     public string Content { get; }
 
-    public IEnumerable<string> Fields => this.fields;
+    public IReadOnlyDictionary<string, string> Properties => this.properties;
 
-    public int FieldCount => this.fields.Length;
-
-    public IReadOnlyDictionary<string, string> Values => this.values;
-
-    public void Write(string field, string value)
+    public void Write(string key, string value)
     {
-        if (String.IsNullOrEmpty(field))
+        if (String.IsNullOrEmpty(key))
         {
-            throw new ArgumentException($"'{nameof(field)}' cannot be null or empty.", nameof(field));
+            throw new ArgumentException($"'{nameof(key)}' cannot be null or empty.", nameof(key));
         }
 
         if (String.IsNullOrEmpty(value))
@@ -58,20 +65,20 @@ public sealed partial class DocumentTemplate
             throw new ArgumentException($"'{nameof(value)}' cannot be null or empty.", nameof(value));
         }
 
-        if (!this.values.ContainsKey(field))
+        if (!this.properties.ContainsKey(key))
         {
-            throw new KeyNotFoundException(field);
+            throw new KeyNotFoundException(key);
         }
 
-        this.values[field] = value;
+        this.properties[key] = value;
     }
 
-    public string Read(string field)
+    public string Read(string key)
     {
-        return String.IsNullOrEmpty(field)
-            ? throw new ArgumentException($"'{nameof(field)}' cannot be null or empty.", nameof(field))
-            : !this.values.TryGetValue(field, out var value)
-                ? throw new KeyNotFoundException(field)
+        return String.IsNullOrEmpty(key)
+            ? throw new ArgumentException($"'{nameof(key)}' cannot be null or empty.", nameof(key))
+            : !this.properties.TryGetValue(key, out var value)
+                ? throw new KeyNotFoundException(key)
                 : value;
     }
 
@@ -84,13 +91,13 @@ public sealed partial class DocumentTemplate
 
     public string Render()
     {
-        var lines = SplitPattern().Split(this.Content);
+        var lines = SplitOnFieldPattern().Split(this.Content);
         for (var i = 0; i < lines.Length; i++)
         {
             var line = lines[i];
             if (IsField(line))
             {
-                lines[i] = this.values[line[2..^2]];
+                lines[i] = this.properties[line[2..^2]];
             }
         }
 

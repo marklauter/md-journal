@@ -18,8 +18,8 @@ public class DocumentTemplateTests
     {
         var template = new DocumentTemplate(Content);
 
-        Assert.NotEmpty(template.Values);
-        Assert.Contains("name", template.Values.Select(kvp => kvp.Key));
+        Assert.NotEmpty(template.Properties);
+        Assert.Contains("name", template.Properties.Select(kvp => kvp.Key));
     }
 
     [Fact]
@@ -31,14 +31,13 @@ public class DocumentTemplateTests
         template.Write("name", expectedValue);
 
         Assert.Contains(expectedValue, template.Read("name"));
-        Assert.Contains(expectedValue, template.Values.Select(kvp => kvp.Value));
+        Assert.Contains(expectedValue, template.Properties.Select(kvp => kvp.Value));
     }
 
     [Fact]
     public void ToString_Returns_Merged_Document()
     {
         var template = new DocumentTemplate(Content);
-
         template.Write("name", "world");
 
         var rendered = template.Render();
