@@ -47,6 +47,11 @@ public sealed partial class DocumentTemplate
             .ToDictionary(key => key);
     }
 
+    public DocumentTemplate(IContentSource contentSource)
+        : this(contentSource?.Content ?? throw new ArgumentNullException(nameof(contentSource)))
+    {
+    }
+
     public DocumentTemplate(DocumentRecord record)
         : this(record?.Content ?? throw new ArgumentNullException(nameof(record)))
     {
