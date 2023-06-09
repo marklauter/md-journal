@@ -5,16 +5,7 @@ public class DocumentTemplateTests
     private const string Content = "Hello, {{name}}.";
 
     [Fact]
-    public void CTOR_Builds_Field_Collection()
-    {
-        var template = new DocumentTemplate(Content);
-
-        Assert.NotEmpty(template.Fields);
-        Assert.Contains("name", template.Fields);
-    }
-
-    [Fact]
-    public void CTOR_Builds_FieldValue_Dictionary()
+    public void CTOR_Builds_Properties_Dictionary()
     {
         var template = new DocumentTemplate(Content);
 
