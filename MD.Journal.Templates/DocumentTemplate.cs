@@ -116,7 +116,7 @@ public sealed partial class DocumentTemplate
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private string ReadSystemProperty(string key)
+    private static string ReadSystemProperty(string key)
     {
         return key switch
         {
@@ -149,7 +149,7 @@ public sealed partial class DocumentTemplate
             {
                 var key = line[2..^2];
                 lines[i] = this.IsSystemProperty(key)
-                    ? this.ReadSystemProperty(key)
+                    ? ReadSystemProperty(key)
                     : this.contentProperties[key];
             }
         }
