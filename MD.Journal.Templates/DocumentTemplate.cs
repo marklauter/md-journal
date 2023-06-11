@@ -48,7 +48,7 @@ public sealed partial class DocumentTemplate
     }
 
     public DocumentTemplate(IContentSource contentSource)
-        : this(contentSource?.Content ?? throw new ArgumentNullException(nameof(contentSource)))
+        : this(contentSource?.Contents ?? throw new ArgumentNullException(nameof(contentSource)))
     {
     }
 

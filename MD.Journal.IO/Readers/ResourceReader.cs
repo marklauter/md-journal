@@ -87,6 +87,15 @@ namespace MD.Journal.IO.Readers
                 PaginationToken.Eof(uri));
         }
 
+        public string ReadText(ResourceUri uri)
+        {
+            this.logger.LogInformation("{MethodName}({Uri})", nameof(ReadText), (string)uri);
+
+            return !File.Exists(uri)
+                ? String.Empty
+                : File.ReadAllText(uri);
+        }
+
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Task<string> ReadTextAsync(ResourceUri uri)

@@ -6,8 +6,8 @@ public sealed class FileContentSource
     public FileContentSource(string path)
     {
         using var reader = new StreamReader(path, System.Text.Encoding.UTF8, true, 1024 * 4);
-        this.Content = reader.ReadToEnd();
+        this.Contents = reader.ReadToEnd();
     }
 
-    public string Content { get; }
+    public string Contents { get; }
 }

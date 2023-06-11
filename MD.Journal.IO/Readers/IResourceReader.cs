@@ -8,6 +8,7 @@ namespace MD.Journal.IO.Readers
         Task<ReadResponse> ReadLinesAsync(ResourceUri uri);
         Task<ReadResponse> ReadLinesAsync(PaginationToken paginationToken);
 
+        string ReadText(ResourceUri uri);
         Task<string> ReadTextAsync(ResourceUri uri);
         Task<string> ReadTextAsync(ResourceUri uri, int offset, int length);
     }

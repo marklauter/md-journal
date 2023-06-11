@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace MD.Journal.IO.Writers
 {
-    public static class ResourceIOServiceCollectionExtensions
+    public static class ResourceWriterCollectionExtensions
     {
         public static IServiceCollection AddResourceWriter(this IServiceCollection services)
         {

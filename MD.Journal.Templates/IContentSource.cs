@@ -2,5 +2,5 @@
 
 public interface IContentSource
 {
-    public string Content { get; }
+    public string Contents { get; }
 }
