@@ -7,24 +7,24 @@ namespace MD.Journal.RecentRepositories;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddRecentRepositories(
+    public static IServiceCollection AddRecentRepositoryService(
         this IServiceCollection services)
     {
-        return services.AddTransient<Func<string, IRecentRepositories>>(
+        return services.AddTransient<Func<string, IRecentRepositoryService>>(
             serviceProvider =>
-            (path) => serviceProvider.CreateRecentRepositories(path));
+            (path) => serviceProvider.CreateRecentRepositoryService(path));
     }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IRecentRepositories GetRecentRepositories(
+    public static IRecentRepositoryService GetRecentRepositoryService(
         this IServiceProvider serviceProvider,
         string path)
     {
-        return serviceProvider.GetRequiredService<Func<string, IRecentRepositories>>()(path);
+        return serviceProvider.GetRequiredService<Func<string, IRecentRepositoryService>>()(path);
     }
 
-    private static IRecentRepositories CreateRecentRepositories(
+    private static IRecentRepositoryService CreateRecentRepositoryService(
         this IServiceProvider serviceProvider,
         string path)
     {
@@ -35,7 +35,7 @@ public static class ServiceCollectionExtensions
 
         var fileSystem = serviceProvider.GetRequiredService<IFileSystem>();
 
-        return new RecentRepositories(
+        return new RecentRepositoryService(
             path,
             fileSystem);
     }

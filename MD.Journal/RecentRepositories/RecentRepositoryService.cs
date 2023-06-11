@@ -4,16 +4,14 @@ using System.Runtime.CompilerServices;
 
 namespace MD.Journal.RecentRepositories;
 
-public sealed class RecentRepositories
-    : IRecentRepositories
+public sealed class RecentRepositoryService
+    : IRecentRepositoryService
 {
     private const int EntryLimit = 20;
-
-    private readonly string path;
     private readonly IFileSystem fileSystem;
 
     //Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-    public RecentRepositories(
+    public RecentRepositoryService(
         string rootPath,
         IFileSystem fileSystem)
     {
@@ -22,21 +20,23 @@ public sealed class RecentRepositories
             throw new ArgumentException($"'{nameof(rootPath)}' cannot be null or empty.", nameof(rootPath));
         }
 
-        this.path = Path.Combine(
+        this.Path = System.IO.Path.Combine(
             rootPath,
             "MD.Journal",
             "RecentRepositories.json");
 
         this.fileSystem = fileSystem;
-        fileSystem.CreateDirectory(this.path);
+        fileSystem.CreateDirectory(this.Path);
     }
+
+    public string Path { get; }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public async Task<IEnumerable<RecentRepository>> ReadAsync(CancellationToken cancellationToken)
     {
-        return this.fileSystem.FileExists(this.path)
-            ? (await this.fileSystem.ReadAllLinesAsync(this.path, cancellationToken))
+        return this.fileSystem.FileExists(this.Path)
+            ? (await this.fileSystem.ReadAllLinesAsync(this.Path, cancellationToken))
                 .Where(line => !String.IsNullOrWhiteSpace(line))
                 .Select(line => (RecentRepository)line)
                 .OrderByDescending(item => item.LastAccessUtc)
@@ -76,7 +76,7 @@ public sealed class RecentRepositories
         }
 
         await this.fileSystem.WriteAllLinesAsync(
-            this.path,
+            this.Path,
             items.Select(item => (string)item),
             cancellationToken);
     }

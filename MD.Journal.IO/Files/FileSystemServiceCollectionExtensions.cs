@@ -11,7 +11,13 @@ public static class FileSystemServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddVirtualFileSystem(this IServiceCollection services)
+    public static IServiceCollection AddVirtualFileSystemAsScoped(this IServiceCollection services)
+    {
+        services.TryAddScoped<IFileSystem, VirtualFileSystem>();
+        return services;
+    }
+
+    public static IServiceCollection AddVirtualFileSystemAsSingleton(this IServiceCollection services)
     {
         services.TryAddSingleton<IFileSystem, VirtualFileSystem>();
         return services;
