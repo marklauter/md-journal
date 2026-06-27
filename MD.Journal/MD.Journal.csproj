@@ -19,7 +19,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Grynwald.MarkdownGenerator" Version="3.0.106" />
-		<PackageReference Include="IDisposableAnalyzers" Version="4.0.6">
+		<PackageReference Include="IDisposableAnalyzers" Version="4.0.8">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
